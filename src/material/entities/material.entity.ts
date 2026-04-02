@@ -1,0 +1,26 @@
+import { ArchivoMaterial } from 'src/archivo_material/entities/archivo_material.entity';
+import { Curso } from 'src/curso/entities/curso.entity';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+
+/* eslint-disable prettier/prettier */
+@Entity()
+export class Material {
+    @PrimaryGeneratedColumn()
+    id_material: number;
+    @ManyToOne(() => Curso, (curso)=> curso.cursos)
+    @JoinColumn({ name: 'id_curso' })
+    curso: Curso;
+    @Column({ length: 255 })
+    titulo: string;
+    @Column()
+    fecha_subida: Date;
+    @OneToMany(() => ArchivoMaterial, archivoMaterial => archivoMaterial.material)
+    archivos: ArchivoMaterial[];
+}
