@@ -13,7 +13,7 @@ export class Usuario {
     @Column()
     correo: string;
     @Column()
-    pasword: string;
+    password: string;
     @Column()
     rol: string;
     @Column()

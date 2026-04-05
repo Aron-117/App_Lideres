@@ -10,7 +10,9 @@ export class Inscripcion {
     @ManyToOne(() => Usuario, usuario => usuario.inscripciones)
     @JoinColumn({ name: 'id_usuario' })
     usuario: Usuario
-    @ManyToOne(() => Curso, curso => curso.inscripciones)
+    @ManyToOne(() => Curso, curso => curso.inscripciones,{
+        onDelete: 'CASCADE',
+    })
     @JoinColumn({ name: 'id_curso' })
     curso: Curso;
     @Column()

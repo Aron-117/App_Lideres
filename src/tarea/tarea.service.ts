@@ -31,17 +31,33 @@ export class TareaService {
       throw new NotFoundException('Curso no encontrado');
     }
     const tarea = this.tareaRepository.create(createTareaDto);
-    return this.tareaRepository.save(tarea);
+    return await this.tareaRepository.save(tarea);
   }
 
   async findAll() {
-    return this.tareaRepository.find();
+    return await this.tareaRepository.find();
   }
 
   async findOne(id: number) {
-    return this.tareaRepository.findOneBy({ id_tarea: id });
+    return await this.tareaRepository.findOneBy({ id_tarea: id });
   }
-
+  async findPendientes(id_usuario: number) {
+    const usuario = await this.usuarioRepository.findOneBy({ id_usuario });
+    if (!usuario) {
+      throw new NotFoundException('Usuario no encontrado');
+    }
+    return this.tareaRepository
+      .createQueryBuilder('tarea')
+      .leftJoin(
+        'tarea.entregas',
+        'entrega',
+        'entrega.tarea.id_tarea = tarea.id_tarea AND entrega.usuario.id_usuario = :id_usuario',
+        { id_usuario },
+      )
+      .where('entrega.id_entrega IS NULL')
+      .orderBy('tarea.fecha_entrega', 'ASC')
+      .getMany();
+  }
   async update(id: number, updateTareaDto: UpdateTareaDto) {
     const tarea = await this.tareaRepository.findOneBy({ id_tarea: id });
     if (!tarea) {

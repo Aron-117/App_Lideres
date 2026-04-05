@@ -21,7 +21,10 @@ export class CursoService {
     if (!profesor) {
       throw new NotFoundException('Profesor no encontrado');
     }
-    const curso = this.cursoRepository.create(createCursoDto);
+    const curso = this.cursoRepository.create({
+      ...createCursoDto,
+      profesor: { id_usuario: createCursoDto.id_profesor },
+    });
     return await this.cursoRepository.save(curso);
   }
 
@@ -33,6 +36,29 @@ export class CursoService {
     return await this.cursoRepository.findOneBy({ id_curso: id });
   }
 
+  async findMyCursos(userId: number) {
+    const usuario = await this.usuarioRespository.findOne({
+      where: { id_usuario: userId },
+      relations: ['cursos'],
+    });
+    return usuario?.cursos || [];
+  }
+  async findRecursos(id: number) {
+    const tareas = await this.cursoRepository.findOne({
+      where: { id_curso: id },
+      relations: ['tareas', 'cursos'],
+    });
+    const materiales = await this.cursoRepository.findOne({
+      where: { id_curso: id },
+      relations: ['cursos'],
+    });
+    const repuesta = {
+      curso: this.cursoRepository.findOneBy({ id_curso: id }),
+      tareas: tareas?.tareas || [],
+      materiales: materiales?.cursos || [],
+    };
+    return repuesta;
+  }
   async update(id: number, updateCursoDto: UpdateCursoDto) {
     const curso = await this.cursoRepository.findOneBy({ id_curso: id });
     if (!curso) {

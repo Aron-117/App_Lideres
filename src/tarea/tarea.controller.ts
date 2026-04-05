@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Req } from '@nestjs/common';
 import { TareaService } from './tarea.service';
 import { CreateTareaDto } from './dto/create-tarea.dto';
 import { UpdateTareaDto } from './dto/update-tarea.dto';
@@ -15,6 +15,10 @@ export class TareaController {
   @Get()
   findAll() {
     return this.tareaService.findAll();
+  }
+  @Get('pendientes')
+  findPendientes(@Req() req) {
+    return this.tareaService.findPendientes(req.user?.sub);
   }
 
   @Get(':id')

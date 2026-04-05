@@ -41,7 +41,11 @@ export class EntregaService {
   async findOne(id: number) {
     return await this.entregaRepository.findOneBy({ id_entrega: id });
   }
-
+  async findByUsuario(options: { id_usuario: number }) {
+    return await this.entregaRepository.find({
+      where: { usuario: { id_usuario: options.id_usuario } },
+    });
+  }
   async update(id: number, updateEntregaDto: UpdateEntregaDto) {
     const entrega = await this.entregaRepository.findOneBy({ id_entrega: id });
     if (!entrega) {

@@ -32,7 +32,12 @@ export class InscripcionService {
       throw new NotFoundException(
         `Curso con id ${createInscripcionDto.id_curso} no encontrado`,
       );
-    const inscripcion = this.inscripcionRepository.create(createInscripcionDto);
+    const inscripcion = this.inscripcionRepository.create({
+      usuario: { id_usuario: createInscripcionDto.id_usuario },
+      curso: { id_curso: createInscripcionDto.id_curso },
+      fecha_inscripcion: createInscripcionDto.fecha_inscripcion,
+      estado: createInscripcionDto.estado,
+    });
     return await this.inscripcionRepository.save(inscripcion);
   }
 
@@ -43,7 +48,17 @@ export class InscripcionService {
   async findOne(id: number) {
     return await this.inscripcionRepository.findOneBy({ id_inscripcion: id });
   }
-
+  async findCursosByEstudianteId(estudianteId: number) {
+    const inscripciones = await this.inscripcionRepository.find({
+      where: { usuario: { id_usuario: estudianteId } },
+      relations: ['curso'],
+    });
+    return inscripciones.map((inscripcion) => ({
+      ...inscripcion.curso,
+      fechaInscripcion: inscripcion.fecha_inscripcion,
+      estado: inscripcion.estado,
+    }));
+  }
   async update(id: number, updateInscripcionDto: UpdateInscripcionDto) {
     const inscripcion = await this.inscripcionRepository.findOneBy({
       id_inscripcion: id,

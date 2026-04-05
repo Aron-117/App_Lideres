@@ -11,6 +11,7 @@ import { ArchivoTareaModule } from './archivo_tarea/archivo_tarea.module';
 import { ArchivoMaterialModule } from './archivo_material/archivo_material.module';
 import { ArchivoEntregaModule } from './archivo_entrega/archivo_entrega.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       synchronize: true,
       logging: true,
     }),
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
