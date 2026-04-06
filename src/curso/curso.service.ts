@@ -50,6 +50,7 @@ export class CursoService {
     });
     const tareasConTipo = (curso?.tareas || []).map((tarea) => ({
       ...tarea,
+      fecha: tarea.fecha_publicacion,
       tipo: 'tarea',
     }));
     const cursoM = await this.cursoRepository.findOne({
@@ -58,13 +59,14 @@ export class CursoService {
     });
     const materialesConTipo = (cursoM?.materiales || []).map((material) => ({
       ...material,
+      fecha: material.fecha_subida,
       tipo: 'material',
     }));
-    //return this.cursoRepository.findOneBy({ id_curso: id });
+    const recursos = [...tareasConTipo, ...materialesConTipo];
+    recursos.sort((a, b) => b.fecha.getTime() - a.fecha.getTime());
     const repuesta = {
       curso: await this.cursoRepository.findOneBy({ id_curso: id }),
-      tareas: tareasConTipo || [],
-      materiales: materialesConTipo || [],
+      recursos,
     };
     return repuesta;
   }
