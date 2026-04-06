@@ -49,7 +49,7 @@ export class CursoController {
   }
   @Get(':id/recursos')
   findRecursos(@Param('id') id: string) {
-    return this.cursoService.findRecursosByUsuarioId(+id);
+    return this.cursoService.findRecursos(+id);
   }
   @Get(':id')
   findOne(@Param('id') id: string) {

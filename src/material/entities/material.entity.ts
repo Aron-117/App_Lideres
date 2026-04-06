@@ -14,7 +14,7 @@ import {
 export class Material {
     @PrimaryGeneratedColumn()
     id_material: number;
-    @ManyToOne(() => Curso, (curso)=> curso.cursos)
+    @ManyToOne(() => Curso, (curso)=> curso.materiales)
     @JoinColumn({ name: 'id_curso' })
     curso: Curso;
     @Column({ length: 255 })

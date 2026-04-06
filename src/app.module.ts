@@ -12,6 +12,7 @@ import { ArchivoMaterialModule } from './archivo_material/archivo_material.modul
 import { ArchivoEntregaModule } from './archivo_entrega/archivo_entrega.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
+import { FilesModule } from './files/files.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { AuthModule } from './auth/auth.module';
       logging: true,
     }),
     AuthModule,
+    FilesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

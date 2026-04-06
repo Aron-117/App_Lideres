@@ -44,18 +44,27 @@ export class CursoService {
     return usuario?.cursos || [];
   }
   async findRecursos(id: number) {
-    const tareas = await this.cursoRepository.findOne({
+    const curso = await this.cursoRepository.findOne({
       where: { id_curso: id },
-      relations: ['tareas', 'cursos'],
+      relations: ['tareas'],
     });
-    const materiales = await this.cursoRepository.findOne({
+    const tareasConTipo = (curso?.tareas || []).map((tarea) => ({
+      ...tarea,
+      tipo: 'tarea',
+    }));
+    const cursoM = await this.cursoRepository.findOne({
       where: { id_curso: id },
-      relations: ['cursos'],
+      relations: ['materiales'],
     });
+    const materialesConTipo = (cursoM?.materiales || []).map((material) => ({
+      ...material,
+      tipo: 'material',
+    }));
+    //return this.cursoRepository.findOneBy({ id_curso: id });
     const repuesta = {
-      curso: this.cursoRepository.findOneBy({ id_curso: id }),
-      tareas: tareas?.tareas || [],
-      materiales: materiales?.cursos || [],
+      curso: await this.cursoRepository.findOneBy({ id_curso: id }),
+      tareas: tareasConTipo || [],
+      materiales: materialesConTipo || [],
     };
     return repuesta;
   }

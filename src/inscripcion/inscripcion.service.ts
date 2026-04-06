@@ -32,6 +32,15 @@ export class InscripcionService {
       throw new NotFoundException(
         `Curso con id ${createInscripcionDto.id_curso} no encontrado`,
       );
+    const duplicate = await this.inscripcionRepository.findOne({
+      where: {
+        usuario: { id_usuario: createInscripcionDto.id_usuario },
+        curso: { id_curso: createInscripcionDto.id_curso },
+      },
+    });
+    if (duplicate) {
+      throw new NotFoundException(`El usuario ya está inscrito en este curso`);
+    }
     const inscripcion = this.inscripcionRepository.create({
       usuario: { id_usuario: createInscripcionDto.id_usuario },
       curso: { id_curso: createInscripcionDto.id_curso },

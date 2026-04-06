@@ -31,7 +31,7 @@ export class Curso {
     @OneToMany(() => Tarea, tarea => tarea.curso)
     tareas: Tarea[];
     @OneToMany(() => Material, material => material.curso)
-    cursos: Material[];
+    materiales: Material[];
     @OneToMany(() => Usuario, usuario => usuario.cursos)
     estudiantes: Usuario[];
     @OneToMany(() => Inscripcion, inscripcion => inscripcion.curso)
