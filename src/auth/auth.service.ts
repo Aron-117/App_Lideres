@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsuarioService } from 'src/usuario/usuario.service';
 
@@ -17,7 +21,7 @@ export class AuthService {
       throw new NotFoundException('Usuario no encontrado');
     }
     if (usuario.password !== password) {
-      throw new NotFoundException('Contraseña incorrecta');
+      throw new UnauthorizedException('Contraseña incorrecta');
     }
     const payload = {
       correo: usuario.correo,

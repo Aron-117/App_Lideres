@@ -46,7 +46,7 @@ export class TareaService {
     if (!usuario) {
       throw new NotFoundException('Usuario no encontrado');
     }
-    return this.tareaRepository
+    return await this.tareaRepository
       .createQueryBuilder('tarea')
       .leftJoin(
         'tarea.entregas',
@@ -54,6 +54,7 @@ export class TareaService {
         'entrega.tarea.id_tarea = tarea.id_tarea AND entrega.usuario.id_usuario = :id_usuario',
         { id_usuario },
       )
+      .innerJoinAndSelect('tarea.curso', 'curso')
       .where('entrega.id_entrega IS NULL')
       .orderBy('tarea.fecha_entrega', 'ASC')
       .getMany();
