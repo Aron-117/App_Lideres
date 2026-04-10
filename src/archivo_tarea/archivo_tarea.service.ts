@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateArchivoTareaDto } from './dto/create-archivo_tarea.dto';
 import { UpdateArchivoTareaDto } from './dto/update-archivo_tarea.dto';
 import { ArchivoTarea } from './entities/archivo_tarea.entity';
@@ -14,16 +14,20 @@ export class ArchivoTareaService {
     @InjectRepository(Tarea)
     private readonly tareaRepository: Repository<Tarea>,
   ) {}
-  async create(createArchivoTareaDto: CreateArchivoTareaDto) {
+  async create(createArchivoTareaDto: CreateArchivoTareaDto, file) {
+    if (!file) {
+      throw new BadRequestException('Archivo requerido');
+    }
     const tarea = await this.tareaRepository.findOneBy({
       id_tarea: createArchivoTareaDto.id_tarea,
     });
     if (!tarea) {
       throw new NotFoundException('Tarea no encontrada');
     }
-    const archivoTarea = this.archivoTareaRepository.create(
-      createArchivoTareaDto,
-    );
+    const archivoTarea = this.archivoTareaRepository.create({
+      nombre_archivo: file.filename,
+      tarea: tarea,
+    });
     return await this.archivoTareaRepository.save(archivoTarea);
   }
 

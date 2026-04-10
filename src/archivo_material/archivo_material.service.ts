@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateArchivoMaterialDto } from './dto/create-archivo_material.dto';
 import { UpdateArchivoMaterialDto } from './dto/update-archivo_material.dto';
 import { ArchivoMaterial } from './entities/archivo_material.entity';
@@ -14,16 +14,20 @@ export class ArchivoMaterialService {
     @InjectRepository(Material)
     private materialRepository: Repository<Material>,
   ) {}
-  async create(createArchivoMaterialDto: CreateArchivoMaterialDto) {
+  async create(createArchivoMaterialDto: CreateArchivoMaterialDto, file) {
+    if (!file) {
+      throw new BadRequestException('Archivo requerido');
+    }
     const material = await this.materialRepository.findOneBy({
       id_material: createArchivoMaterialDto.id_material,
     });
     if (!material) {
       throw new NotFoundException('Material no encontrado');
     }
-    const archivoMaterial = this.archivoMaterialRepository.create(
-      createArchivoMaterialDto,
-    );
+    const archivoMaterial = this.archivoMaterialRepository.create({
+      nombre_archivo: file.filename,
+      material: material,
+    });
     return await this.archivoMaterialRepository.save(archivoMaterial);
   }
 

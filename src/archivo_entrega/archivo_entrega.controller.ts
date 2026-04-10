@@ -28,7 +28,6 @@ export class ArchivoEntregaController {
     @UploadedFile() file,
     @Body() createArchivoEntregaDto: CreateArchivoEntregaDto,
   ) {
-    console.log(createArchivoEntregaDto);
     return this.archivoEntregaService.create(createArchivoEntregaDto, file);
   }
 

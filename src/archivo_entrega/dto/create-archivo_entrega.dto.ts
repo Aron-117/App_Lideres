@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsInt, IsString } from 'class-validator';
+import { IsInt } from 'class-validator';
 export class CreateArchivoEntregaDto {
     @Type(() => Number)
     @IsInt()
