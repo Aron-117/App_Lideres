@@ -20,8 +20,7 @@ export class FilesController {
   @Post('upload')
   @UseInterceptors(FileInterceptor('file'))
   uploadFile(@UploadedFile() file) {
-    const nombre = file.filename;
-    nombre.replace(/[^a-zA-Z0-9.]/g, '_');
+    const nombre = file.filename.replace(/[^a-zA-Z0-9.]/g, '_');
     return {
       filename: nombre
     };

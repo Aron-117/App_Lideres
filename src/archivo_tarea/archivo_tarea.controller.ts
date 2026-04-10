@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { ArchivoTareaService } from './archivo_tarea.service';
 import { CreateArchivoTareaDto } from './dto/create-archivo_tarea.dto';
 import { UpdateArchivoTareaDto } from './dto/update-archivo_tarea.dto';

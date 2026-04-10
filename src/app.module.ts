@@ -13,6 +13,8 @@ import { ArchivoEntregaModule } from './archivo_entrega/archivo_entrega.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
 import { FilesModule } from './files/files.module';
+import { MulterModule } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
 
 @Module({
   imports: [

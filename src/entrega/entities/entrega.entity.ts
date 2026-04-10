@@ -8,12 +8,13 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryColumn,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
 
 /* eslint-disable prettier/prettier */
 @Entity()
 export class Entrega {
-    @PrimaryColumn()
+    @PrimaryGeneratedColumn()
     id_entrega: number;
     @ManyToOne(() => Tarea, tarea => tarea.entregas)
     @JoinColumn({ name: 'id_tarea' })

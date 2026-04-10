@@ -30,7 +30,12 @@ export class EntregaService {
     if (!tarea) {
       throw new NotFoundException('Tarea no encontrada');
     }
-    const entrega = this.entregaRepository.create(createEntregaDto);
+    const entrega = this.entregaRepository.create({
+      ...createEntregaDto,
+      tarea,
+      usuario,
+    });
+    entrega.calificacion = Number(entrega.calificacion);
     return this.entregaRepository.save(entrega);
   }
 
