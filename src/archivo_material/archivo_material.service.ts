@@ -46,6 +46,7 @@ export class ArchivoMaterialService {
     if (!archivoMaterial) {
       throw new NotFoundException('Archivo de material no encontrado');
     }
+    
     this.archivoMaterialRepository.merge(
       archivoMaterial,
       updateArchivoMaterialDto as any,
