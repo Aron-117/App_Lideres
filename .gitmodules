@@ -1,0 +1,3 @@
+[submodule "App_Lideres-priv"]
+	path = App_Lideres-priv
+	url = git@github.com:Aron-117/App_Lideres-priv.git
