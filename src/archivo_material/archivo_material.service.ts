@@ -48,7 +48,7 @@ export class ArchivoMaterialService {
     }
     this.archivoMaterialRepository.merge(
       archivoMaterial,
-      updateArchivoMaterialDto,
+      updateArchivoMaterialDto as any,
     );
     return await this.archivoMaterialRepository.save(archivoMaterial);
   }
