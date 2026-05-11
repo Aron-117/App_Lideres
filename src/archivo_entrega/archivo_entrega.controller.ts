@@ -8,27 +8,33 @@ import {
   Delete,
   UseInterceptors,
   UploadedFile,
-  NotFoundException,
   Res,
 } from '@nestjs/common';
 import { ArchivoEntregaService } from './archivo_entrega.service';
 import { CreateArchivoEntregaDto } from './dto/create-archivo_entrega.dto';
 import { UpdateArchivoEntregaDto } from './dto/update-archivo_entrega.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
-import * as path from 'path';
-import * as fs from 'fs';
+import { storage } from 'src/files/config/cloudinary.storage';
 
 @Controller('archivo-entrega')
 export class ArchivoEntregaController {
   constructor(private readonly archivoEntregaService: ArchivoEntregaService) {}
 
   @Post()
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage,
+    }),
+  )
   create(
     @UploadedFile() file,
     @Body() createArchivoEntregaDto: CreateArchivoEntregaDto,
   ) {
-    return this.archivoEntregaService.create(createArchivoEntregaDto, file);
+    return this.archivoEntregaService.create(createArchivoEntregaDto, {
+      nombre_archivo: file.originalname,
+      url: file.path,
+      public_id: file.filename,
+    });
   }
 
   @Get()
@@ -37,20 +43,8 @@ export class ArchivoEntregaController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string, @Res() res) {
-    const archivo = await this.archivoEntregaService.findOne(+id);
-    if (!archivo) {
-      throw new NotFoundException('Archivo no encontrado');
-    }
-    const filePath = path.join(
-      process.cwd(),
-      'uploads',
-      archivo.nombre_archivo,
-    );
-    if (!fs.existsSync(filePath)) {
-      throw new NotFoundException('Archivo no encontrado');
-    }
-    return res.download(filePath);
+  async findOne(@Param('id') id: string) {
+    return this.archivoEntregaService.findOne(+id);
   }
 
   @Patch(':id')

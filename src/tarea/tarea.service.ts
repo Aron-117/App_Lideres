@@ -39,7 +39,10 @@ export class TareaService {
   }
 
   async findOne(id: number) {
-    return await this.tareaRepository.findOneBy({ id_tarea: id });
+    return await this.tareaRepository.findOne({
+      where: { id_tarea: id },
+      relations: ['archivos'],
+    });
   }
   async findPendientes(id_usuario: number) {
     const usuario = await this.usuarioRepository.findOneBy({ id_usuario });

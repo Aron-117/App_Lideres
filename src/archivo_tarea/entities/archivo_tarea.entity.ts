@@ -17,4 +17,8 @@ export class ArchivoTarea {
     tarea: Tarea;
     @Column({ length: 255 })
     nombre_archivo: string;
+    @Column()
+    url: string;
+    @Column()
+    public_id: string;
 }

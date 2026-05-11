@@ -18,8 +18,15 @@ export class ArchivoEntregaService {
     @InjectRepository(Entrega)
     private readonly entregaRepository: Repository<Entrega>,
   ) {}
-  async create(createArchivoEntregaDto: CreateArchivoEntregaDto, file) {
-    if (!file) {
+  async create(
+    createArchivoEntregaDto: CreateArchivoEntregaDto,
+    fileData: {
+      nombre_archivo: string;
+      url: string;
+      public_id: string;
+    },
+  ) {
+    if (!fileData) {
       throw new BadRequestException('Archivo requerido');
     }
     const entrega = await this.entregaRepository.findOneBy({
@@ -29,7 +36,9 @@ export class ArchivoEntregaService {
       throw new NotFoundException('Entrega no encontrada');
     }
     const archivoEntrega = this.archivoEntregaRepository.create({
-      nombre_archivo: file.filename,
+      nombre_archivo: fileData.nombre_archivo,
+      url: fileData.url,
+      public_id: fileData.public_id,
       entrega: entrega,
     });
     return await this.archivoEntregaRepository.save(archivoEntrega);
@@ -40,7 +49,9 @@ export class ArchivoEntregaService {
   }
 
   async findOne(id: number) {
-    return await this.archivoEntregaRepository.findOneBy({ id_archivo: id });
+    const archivo = await this.archivoEntregaRepository.findOneBy({ id_archivo: id });
+    if (!archivo) throw new NotFoundException('Archivo no econtrado');
+    return archivo;
   }
 
   async update(id: number, updateArchivoEntregaDto: UpdateArchivoEntregaDto) {

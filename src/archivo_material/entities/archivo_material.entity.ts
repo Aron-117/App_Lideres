@@ -17,4 +17,8 @@ export class ArchivoMaterial {
     material: Material;
     @Column({ length: 255 })
     nombre_archivo: string;
+    @Column({nullable: true})
+    url: string;
+    @Column({nullable: true})
+    public_id: string;
 }

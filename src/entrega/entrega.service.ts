@@ -44,7 +44,10 @@ export class EntregaService {
   }
 
   async findOne(id: number) {
-    return await this.entregaRepository.findOneBy({ id_entrega: id });
+    return await this.entregaRepository.findOne({
+      where: { id_entrega: id },
+      relations: ['archivos'],
+    });
   }
   async findByUsuario(options: { id_usuario: number }) {
     return await this.entregaRepository.find({
