@@ -37,11 +37,13 @@ export class CursoService {
   }
 
   async findMyCursos(userId: number) {
-    const usuario = await this.usuarioRespository.findOne({
-      where: { id_usuario: userId },
-      relations: ['cursos'],
+    return await this.cursoRepository.find({
+      where: {
+        profesor: {
+          id_usuario: userId,
+        },
+      },
     });
-    return usuario?.cursos || [];
   }
   async findRecursos(id: number) {
     const curso = await this.cursoRepository.findOne({

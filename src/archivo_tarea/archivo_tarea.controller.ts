@@ -43,7 +43,7 @@ export class ArchivoTareaController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string, @Res() res) {
+  async findOne(@Param('id') id: string) {
     return this.archivoTareaService.findOne(+id);
   }
 
