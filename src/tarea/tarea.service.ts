@@ -49,16 +49,18 @@ export class TareaService {
     if (!usuario) {
       throw new NotFoundException('Usuario no encontrado');
     }
-    return await this.tareaRepository
+    return this.tareaRepository
       .createQueryBuilder('tarea')
+      .innerJoin('tarea.curso', 'curso')
+      .innerJoin('curso.inscripciones', 'inscripcion')
       .leftJoin(
         'tarea.entregas',
         'entrega',
-        'entrega.tarea.id_tarea = tarea.id_tarea AND entrega.usuario.id_usuario = :id_usuario',
+        'entrega.usuario.id_usuario = :id_usuario AND entrega.tarea.id_tarea = tarea.id_tarea',
         { id_usuario },
       )
-      .innerJoinAndSelect('tarea.curso', 'curso')
-      .where('entrega.id_entrega IS NULL')
+      .where('inscripcion.id_usuario = :id_usuario', { id_usuario })
+      .andWhere('entrega.id_entrega IS NULL')
       .orderBy('tarea.fecha_entrega', 'ASC')
       .getMany();
   }
