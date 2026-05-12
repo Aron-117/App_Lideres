@@ -7,34 +7,46 @@ import {
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
-import { FilesService } from './files.service';
-import { Response } from 'express';
 import { FileInterceptor } from '@nestjs/platform-express';
-import * as path from 'path';
-import * as fs from 'fs';
+import type { Response } from 'express';
+
+import { storage } from './config/cloudinary.storage';
+import cloudinary from './config/cloudinary.config';
 
 @Controller('files')
 export class FilesController {
-  constructor(private readonly filesService: FilesService) {}
-
   @Post('upload')
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage,
+    }),
+  )
   uploadFile(@UploadedFile() file) {
-    const nombre = file.filename.replace(/[^a-zA-Z0-9.]/g, '_');
+    const nombre = file.originalname.replace(/[^a-zA-Z0-9.]/g, '_');
+    const resourceType =
+      file.mimetype.startsWith('image/')
+      ? 'image'
+        : file.mimetype.startsWith('video/')
+        ? 'video'
+        : 'raw';
     return {
-      filename: nombre
+      filename: nombre,
+      url: file.path,
+      publicId: file.filename,
+      resourceType,
     };
   }
 
-  @Get('download/:filename')
-  downloadFile(@Param('filename') filename: string, @Res() res) {
-    if (filename.includes('..')) {
-      return res.status(400).send('Invalid filename');
-    }
-    const filePath = path.join(process.cwd(), 'uploads', filename);
-    if (!fs.existsSync(filePath)) {
-      return res.status(404).send('File not found');
-    }
-    return res.download(filePath);
+  @Get('download/:publicId')
+  async downloadFile(
+    @Param('publicId') publicId: string,
+    @Res() res: Response,
+  ) {
+    const url = cloudinary.url(publicId, {
+      resource_type: 'auto',
+      secure: true,
+      flags: 'attachment',
+    });
+    return res.redirect(url);
   }
 }

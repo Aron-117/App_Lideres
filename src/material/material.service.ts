@@ -29,7 +29,10 @@ export class MaterialService {
     return await this.materialRepository.find();
   }
   async findOne(id: number) {
-    return await this.materialRepository.findOneBy({ id_material: id });
+    return await this.materialRepository.findOne({
+      where: { id_material: id },
+      relations: ['archivos'],
+    });
   }
 
   async update(id: number, updateMaterialDto: UpdateMaterialDto) {

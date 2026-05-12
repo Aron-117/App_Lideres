@@ -39,23 +39,28 @@ export class TareaService {
   }
 
   async findOne(id: number) {
-    return await this.tareaRepository.findOneBy({ id_tarea: id });
+    return await this.tareaRepository.findOne({
+      where: { id_tarea: id },
+      relations: ['archivos'],
+    });
   }
   async findPendientes(id_usuario: number) {
     const usuario = await this.usuarioRepository.findOneBy({ id_usuario });
     if (!usuario) {
       throw new NotFoundException('Usuario no encontrado');
     }
-    return await this.tareaRepository
+    return this.tareaRepository
       .createQueryBuilder('tarea')
+      .innerJoin('tarea.curso', 'curso')
+      .innerJoin('curso.inscripciones', 'inscripcion')
       .leftJoin(
         'tarea.entregas',
         'entrega',
-        'entrega.tarea.id_tarea = tarea.id_tarea AND entrega.usuario.id_usuario = :id_usuario',
+        'entrega.usuario.id_usuario = :id_usuario AND entrega.tarea.id_tarea = tarea.id_tarea',
         { id_usuario },
       )
-      .innerJoinAndSelect('tarea.curso', 'curso')
-      .where('entrega.id_entrega IS NULL')
+      .where('inscripcion.id_usuario = :id_usuario', { id_usuario })
+      .andWhere('entrega.id_entrega IS NULL')
       .orderBy('tarea.fecha_entrega', 'ASC')
       .getMany();
   }

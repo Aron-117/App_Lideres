@@ -13,11 +13,15 @@ import { ArchivoEntregaModule } from './archivo_entrega/archivo_entrega.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
 import { FilesModule } from './files/files.module';
+import { ConfigModule } from '@nestjs/config';
 import { MulterModule } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     UsuarioModule,
     InscripcionModule,
     MaterialModule,
@@ -35,9 +39,12 @@ import { diskStorage } from 'multer';
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
-      synchronize: true,
+      synchronize: false,
       logging: true,
-      ssl: { rejectUnauthorized: false }, // necesario para Render
+      ssl:
+        process.env.NODE_ENV === 'production'
+          ? { rejectUnauthorized: false }
+          : false, // necesario para Render
     }),
     AuthModule,
     FilesModule,

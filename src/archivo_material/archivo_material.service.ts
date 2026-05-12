@@ -14,8 +14,15 @@ export class ArchivoMaterialService {
     @InjectRepository(Material)
     private materialRepository: Repository<Material>,
   ) {}
-  async create(createArchivoMaterialDto: CreateArchivoMaterialDto, file) {
-    if (!file) {
+  async create(
+    createArchivoMaterialDto: CreateArchivoMaterialDto,
+    fileData: {
+      nombre_archivo: string;
+      url: string;
+      public_id: string;
+    },
+  ) {
+    if (!fileData) {
       throw new BadRequestException('Archivo requerido');
     }
     const material = await this.materialRepository.findOneBy({
@@ -25,7 +32,9 @@ export class ArchivoMaterialService {
       throw new NotFoundException('Material no encontrado');
     }
     const archivoMaterial = this.archivoMaterialRepository.create({
-      nombre_archivo: file.filename,
+      nombre_archivo: fileData.nombre_archivo,
+      url: fileData.url,
+      public_id: fileData.public_id,
       material: material,
     });
     return await this.archivoMaterialRepository.save(archivoMaterial);
@@ -36,7 +45,11 @@ export class ArchivoMaterialService {
   }
 
   async findOne(id: number) {
-    return await this.archivoMaterialRepository.findOneBy({ id_archivo: id });
+    const archivo = await this.archivoMaterialRepository.findOneBy({
+      id_archivo: id,
+    });
+    if (!archivo) throw new NotFoundException('Archivo no econtrado');
+    return archivo;
   }
 
   async update(id: number, updateArchivoMaterialDto: UpdateArchivoMaterialDto) {
@@ -46,7 +59,6 @@ export class ArchivoMaterialService {
     if (!archivoMaterial) {
       throw new NotFoundException('Archivo de material no encontrado');
     }
-    
     this.archivoMaterialRepository.merge(
       archivoMaterial,
       updateArchivoMaterialDto as any,
