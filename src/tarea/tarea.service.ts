@@ -18,19 +18,16 @@ export class TareaService {
     private cursoRepository: Repository<Curso>,
   ) {}
   async create(createTareaDto: CreateTareaDto) {
-    const usuario = await this.usuarioRepository.findOneBy({
-      id_usuario: createTareaDto.id_usuario,
-    });
     const curso = await this.cursoRepository.findOneBy({
       id_curso: createTareaDto.id_curso,
     });
-    if (!usuario) {
-      throw new NotFoundException('Usuario no encontrado');
-    }
     if (!curso) {
       throw new NotFoundException('Curso no encontrado');
     }
-    const tarea = this.tareaRepository.create(createTareaDto);
+    const tarea = this.tareaRepository.create({
+      curso: { id_curso: createTareaDto.id_curso },
+      ...createTareaDto,
+    });
     return await this.tareaRepository.save(tarea);
   }
 
