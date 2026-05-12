@@ -21,7 +21,10 @@ export class MaterialService {
     if (!curso) {
       throw new NotFoundException('Curso no encontrado');
     }
-    const material = this.materialRepository.create(createMaterialDto);
+    const material = this.materialRepository.create({
+      curso: { id_curso: createMaterialDto.id_curso },
+      ...createMaterialDto,
+    });
     return await this.materialRepository.save(material);
   }
 

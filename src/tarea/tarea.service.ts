@@ -24,7 +24,10 @@ export class TareaService {
     if (!curso) {
       throw new NotFoundException('Curso no encontrado');
     }
-    const tarea = this.tareaRepository.create(createTareaDto);
+    const tarea = this.tareaRepository.create({
+      curso: { id_curso: createTareaDto.id_curso },
+      ...createTareaDto,
+    });
     return await this.tareaRepository.save(tarea);
   }
 
