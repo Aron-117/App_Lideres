@@ -11,9 +11,17 @@ import { ArchivoTareaModule } from './archivo_tarea/archivo_tarea.module';
 import { ArchivoMaterialModule } from './archivo_material/archivo_material.module';
 import { ArchivoEntregaModule } from './archivo_entrega/archivo_entrega.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { AuthModule } from './auth/auth.module';
+import { FilesModule } from './files/files.module';
+import { ConfigModule } from '@nestjs/config';
+import { MulterModule } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     UsuarioModule,
     InscripcionModule,
     MaterialModule,
@@ -25,15 +33,21 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     ArchivoEntregaModule,
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: 'localhost',
-      port: 5432,
-      username: 'postgres',
-      password: '1234',
-      database: 'escuela_lideres',
+      host: process.env.DB_HOST,
+      port: parseInt(process.env.DB_PORT ?? '5432'),
+      username: process.env.DB_USER,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_NAME,
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
-      synchronize: true,
+      synchronize: false,
       logging: true,
+      ssl:
+        process.env.NODE_ENV === 'production'
+          ? { rejectUnauthorized: false }
+          : false, // necesario para Render
     }),
+    AuthModule,
+    FilesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -21,7 +21,10 @@ export class MaterialService {
     if (!curso) {
       throw new NotFoundException('Curso no encontrado');
     }
-    const material = this.materialRepository.create(createMaterialDto);
+    const material = this.materialRepository.create({
+      curso: { id_curso: createMaterialDto.id_curso },
+      ...createMaterialDto,
+    });
     return await this.materialRepository.save(material);
   }
 
@@ -29,7 +32,10 @@ export class MaterialService {
     return await this.materialRepository.find();
   }
   async findOne(id: number) {
-    return await this.materialRepository.findOneBy({ id_material: id });
+    return await this.materialRepository.findOne({
+      where: { id_material: id },
+      relations: ['archivos'],
+    });
   }
 
   async update(id: number, updateMaterialDto: UpdateMaterialDto) {

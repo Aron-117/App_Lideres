@@ -4,9 +4,10 @@ import { ArchivoMaterialController } from './archivo_material.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ArchivoMaterial } from './entities/archivo_material.entity';
 import { Material } from 'src/material/entities/material.entity';
+import { FilesModule } from 'src/files/files.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([ArchivoMaterial, Material])],
+  imports: [TypeOrmModule.forFeature([ArchivoMaterial, Material]), FilesModule],
   controllers: [ArchivoMaterialController],
   providers: [ArchivoMaterialService],
 })

@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateArchivoTareaDto } from './dto/create-archivo_tarea.dto';
 import { UpdateArchivoTareaDto } from './dto/update-archivo_tarea.dto';
 import { ArchivoTarea } from './entities/archivo_tarea.entity';
@@ -14,16 +18,29 @@ export class ArchivoTareaService {
     @InjectRepository(Tarea)
     private readonly tareaRepository: Repository<Tarea>,
   ) {}
-  async create(createArchivoTareaDto: CreateArchivoTareaDto) {
+  async create(
+    createArchivoTareaDto: CreateArchivoTareaDto,
+    fileData: {
+      nombre_archivo: string;
+      url: string;
+      public_id: string;
+    },
+  ) {
+    if (!fileData) {
+      throw new BadRequestException('Archivo requerido');
+    }
     const tarea = await this.tareaRepository.findOneBy({
       id_tarea: createArchivoTareaDto.id_tarea,
     });
     if (!tarea) {
       throw new NotFoundException('Tarea no encontrada');
     }
-    const archivoTarea = this.archivoTareaRepository.create(
-      createArchivoTareaDto,
-    );
+    const archivoTarea = this.archivoTareaRepository.create({
+      nombre_archivo: fileData.nombre_archivo,
+      url: fileData.url,
+      public_id: fileData.public_id,
+      tarea: tarea,
+    });
     return await this.archivoTareaRepository.save(archivoTarea);
   }
 
@@ -32,7 +49,11 @@ export class ArchivoTareaService {
   }
 
   async findOne(id: number) {
-    return await this.archivoTareaRepository.findOneBy({ id_archivo: id });
+    const archivo = await this.archivoTareaRepository.findOneBy({
+      id_archivo: id,
+    });
+    if (!archivo) throw new NotFoundException('Archivo no econtrado');
+    return archivo;
   }
 
   async update(id: number, updateArchivoTareaDto: UpdateArchivoTareaDto) {

@@ -18,30 +18,49 @@ export class TareaService {
     private cursoRepository: Repository<Curso>,
   ) {}
   async create(createTareaDto: CreateTareaDto) {
-    const usuario = await this.usuarioRepository.findOneBy({
-      id_usuario: createTareaDto.id_usuario,
-    });
     const curso = await this.cursoRepository.findOneBy({
       id_curso: createTareaDto.id_curso,
     });
-    if (!usuario) {
-      throw new NotFoundException('Usuario no encontrado');
-    }
     if (!curso) {
       throw new NotFoundException('Curso no encontrado');
     }
-    const tarea = this.tareaRepository.create(createTareaDto);
-    return this.tareaRepository.save(tarea);
+    const tarea = this.tareaRepository.create({
+      curso: { id_curso: createTareaDto.id_curso },
+      ...createTareaDto,
+    });
+    return await this.tareaRepository.save(tarea);
   }
 
   async findAll() {
-    return this.tareaRepository.find();
+    return await this.tareaRepository.find();
   }
 
   async findOne(id: number) {
-    return this.tareaRepository.findOneBy({ id_tarea: id });
+    return await this.tareaRepository.findOne({
+      where: { id_tarea: id },
+      relations: ['archivos'],
+    });
   }
-
+  async findPendientes(id_usuario: number) {
+    const usuario = await this.usuarioRepository.findOneBy({ id_usuario });
+    if (!usuario) {
+      throw new NotFoundException('Usuario no encontrado');
+    }
+    return this.tareaRepository
+      .createQueryBuilder('tarea')
+      .innerJoin('tarea.curso', 'curso')
+      .innerJoin('curso.inscripciones', 'inscripcion')
+      .leftJoin(
+        'tarea.entregas',
+        'entrega',
+        'entrega.usuario.id_usuario = :id_usuario AND entrega.tarea.id_tarea = tarea.id_tarea',
+        { id_usuario },
+      )
+      .where('inscripcion.id_usuario = :id_usuario', { id_usuario })
+      .andWhere('entrega.id_entrega IS NULL')
+      .orderBy('tarea.fecha_entrega', 'ASC')
+      .getMany();
+  }
   async update(id: number, updateTareaDto: UpdateTareaDto) {
     const tarea = await this.tareaRepository.findOneBy({ id_tarea: id });
     if (!tarea) {

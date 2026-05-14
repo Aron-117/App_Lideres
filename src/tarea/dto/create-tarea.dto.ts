@@ -10,7 +10,5 @@ export class CreateTareaDto {
     @IsDateString()
     fecha_entrega: Date;
     @IsInt()
-    id_usuario: number;
-    @IsInt()
     id_curso: number;
 }

@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateArchivoEntregaDto } from './dto/create-archivo_entrega.dto';
 import { UpdateArchivoEntregaDto } from './dto/update-archivo_entrega.dto';
 import { Entrega } from 'src/entrega/entities/entrega.entity';
@@ -14,16 +18,29 @@ export class ArchivoEntregaService {
     @InjectRepository(Entrega)
     private readonly entregaRepository: Repository<Entrega>,
   ) {}
-  async create(createArchivoEntregaDto: CreateArchivoEntregaDto) {
+  async create(
+    createArchivoEntregaDto: CreateArchivoEntregaDto,
+    fileData: {
+      nombre_archivo: string;
+      url: string;
+      public_id: string;
+    },
+  ) {
+    if (!fileData) {
+      throw new BadRequestException('Archivo requerido');
+    }
     const entrega = await this.entregaRepository.findOneBy({
       id_entrega: createArchivoEntregaDto.id_entrega,
     });
     if (!entrega) {
       throw new NotFoundException('Entrega no encontrada');
     }
-    const archivoEntrega = this.archivoEntregaRepository.create(
-      createArchivoEntregaDto,
-    );
+    const archivoEntrega = this.archivoEntregaRepository.create({
+      nombre_archivo: fileData.nombre_archivo,
+      url: fileData.url,
+      public_id: fileData.public_id,
+      entrega: entrega,
+    });
     return await this.archivoEntregaRepository.save(archivoEntrega);
   }
 
@@ -32,7 +49,9 @@ export class ArchivoEntregaService {
   }
 
   async findOne(id: number) {
-    return await this.archivoEntregaRepository.findOneBy({ id_archivo: id });
+    const archivo = await this.archivoEntregaRepository.findOneBy({ id_archivo: id });
+    if (!archivo) throw new NotFoundException('Archivo no econtrado');
+    return archivo;
   }
 
   async update(id: number, updateArchivoEntregaDto: UpdateArchivoEntregaDto) {
@@ -42,10 +61,7 @@ export class ArchivoEntregaService {
     if (!archivoEntrega) {
       throw new NotFoundException('Archivo de entrega no encontrado');
     }
-    this.archivoEntregaRepository.merge(
-      archivoEntrega,
-      updateArchivoEntregaDto,
-    );
+    this.archivoEntregaRepository.merge(archivoEntrega);
     return await this.archivoEntregaRepository.save(archivoEntrega);
   }
 

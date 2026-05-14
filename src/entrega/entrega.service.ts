@@ -30,7 +30,12 @@ export class EntregaService {
     if (!tarea) {
       throw new NotFoundException('Tarea no encontrada');
     }
-    const entrega = this.entregaRepository.create(createEntregaDto);
+    const entrega = this.entregaRepository.create({
+      ...createEntregaDto,
+      tarea,
+      usuario,
+    });
+    entrega.calificacion = Number(entrega.calificacion);
     return this.entregaRepository.save(entrega);
   }
 
@@ -39,9 +44,16 @@ export class EntregaService {
   }
 
   async findOne(id: number) {
-    return await this.entregaRepository.findOneBy({ id_entrega: id });
+    return await this.entregaRepository.findOne({
+      where: { id_entrega: id },
+      relations: ['archivos'],
+    });
   }
-
+  async findByUsuario(options: { id_usuario: number }) {
+    return await this.entregaRepository.find({
+      where: { usuario: { id_usuario: options.id_usuario } },
+    });
+  }
   async update(id: number, updateEntregaDto: UpdateEntregaDto) {
     const entrega = await this.entregaRepository.findOneBy({ id_entrega: id });
     if (!entrega) {
