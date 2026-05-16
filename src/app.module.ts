@@ -39,7 +39,7 @@ import { diskStorage } from 'multer';
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
-      synchronize: false,
+      synchronize: true,
       logging: true,
       ssl:
         process.env.NODE_ENV === 'production'

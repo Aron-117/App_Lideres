@@ -23,7 +23,10 @@ export class MaterialController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateMaterialDto: UpdateMaterialDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateMaterialDto: UpdateMaterialDto,
+  ) {
     return this.materialService.update(+id, updateMaterialDto);
   }
 
