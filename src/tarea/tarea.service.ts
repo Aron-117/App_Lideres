@@ -26,6 +26,7 @@ export class TareaService {
     }
     const tarea = this.tareaRepository.create({
       curso: { id_curso: createTareaDto.id_curso },
+      fecha_publicacion: new Date(),
       ...createTareaDto,
     });
     return await this.tareaRepository.save(tarea);
