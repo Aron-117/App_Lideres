@@ -4,7 +4,7 @@ import { IsDateString, IsInt, IsString, MinLength } from 'class-validator';
 export class CreateTareaDto {
     @IsString()
     @MinLength(3)
-    nombre: string;
+    titulo: string;
     @IsString()
     descripcion: string;
     @IsDateString()
