@@ -67,7 +67,8 @@ export class TareaService {
     if (!tarea) {
       throw new NotFoundException('Tarea no encontrada');
     }
-    return this.tareaRepository.merge(tarea, updateTareaDto);
+    this.tareaRepository.merge(tarea, updateTareaDto);
+    return this.tareaRepository.save(tarea);
   }
 
   async remove(id: number) {
