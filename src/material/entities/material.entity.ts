@@ -21,7 +21,7 @@ export class Material {
     titulo: string;
     @Column({ length: 1000})
     descripcion: string;
-    @Column()
+    @Column({ nullable: true })
     fecha_subida: Date;
     @OneToMany(() => ArchivoMaterial, archivoMaterial => archivoMaterial.material)
     archivos: ArchivoMaterial[];
