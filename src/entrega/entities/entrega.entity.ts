@@ -16,7 +16,7 @@ import {
 export class Entrega {
     @PrimaryGeneratedColumn()
     id_entrega: number;
-    @ManyToOne(() => Tarea, tarea => tarea.entregas)
+    @ManyToOne(() => Tarea, tarea => tarea.entregas, {onDelete: 'CASCADE'})
     @JoinColumn({ name: 'id_tarea' })
     tarea: Tarea;
     @ManyToOne(() => Usuario, usuario => usuario.entregas, {onDelete: 'CASCADE'})
