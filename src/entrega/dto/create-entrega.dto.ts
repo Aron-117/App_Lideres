@@ -4,7 +4,7 @@ export class CreateEntregaDto {
     @IsInt()
     id_tarea: number;
     @IsDecimal()
-    calificacion: number;
+    calificacion?: number;
     @IsString()
-    comentario_profesor: string;
+    comentario_profesor?: string;
 }

@@ -30,11 +30,6 @@ export class EntregaService {
     if (!tarea) {
       throw new NotFoundException('Tarea no encontrada');
     }
-    const entrega = this.entregaRepository.create({
-      ...createEntregaDto,
-      tarea,
-      usuario,
-    });
     const existente = await this.entregaRepository.findOne({
       where: {
         tarea: { id_tarea: createEntregaDto.id_tarea },
@@ -42,7 +37,12 @@ export class EntregaService {
       },
     });
     if (existente) return this.findOne(existente.id_entrega);
-    entrega.calificacion = Number(entrega.calificacion);
+    const entrega = this.entregaRepository.create({
+      ...createEntregaDto,
+      fecha_entrega: new Date(),
+      tarea,
+      usuario,
+    });
     return this.entregaRepository.save(entrega);
   }
 
@@ -76,6 +76,7 @@ export class EntregaService {
     if (!entrega) {
       throw new NotFoundException('Entrega no encontrada');
     }
+    entrega.fecha_entrega = new Date();
     this.entregaRepository.merge(entrega, updateEntregaDto);
     return await this.entregaRepository.save(entrega);
   }

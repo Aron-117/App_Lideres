@@ -24,7 +24,7 @@ export class Entrega {
     usuario: Usuario;
     @Column()
     fecha_entrega: Date;
-    @Column()
+    @Column({nullable: true})
     calificacion: number;
     @Column({ length: 1000, nullable: true })
     comentario_profesor: string;
