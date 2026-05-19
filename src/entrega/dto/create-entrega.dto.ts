@@ -1,9 +1,11 @@
 /* eslint-disable prettier/prettier */
 import {
-  IsDecimal,
   IsInt,
   IsString,
   IsOptional,
+  IsNumber,
+  Max,
+  Min,
 } from "class-validator";
 
 export class CreateEntregaDto {
@@ -11,7 +13,9 @@ export class CreateEntregaDto {
   id_tarea: number;
 
   @IsOptional()
-  @IsDecimal()
+  @IsNumber()
+  @Max(100)
+  @Min(0)
   calificacion?: number;
 
   @IsOptional()
