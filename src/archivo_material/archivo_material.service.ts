@@ -43,7 +43,11 @@ export class ArchivoMaterialService {
   async findAll() {
     return await this.archivoMaterialRepository.find();
   }
-
+  async findByMaterial(idMaterial: number) {
+    return this.archivoMaterialRepository.find({
+      where: { material: { id_material: idMaterial } },
+    });
+  }
   async findOne(id: number) {
     const archivo = await this.archivoMaterialRepository.findOneBy({
       id_archivo: id,

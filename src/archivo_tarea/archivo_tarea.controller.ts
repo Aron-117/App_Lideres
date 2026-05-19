@@ -6,9 +6,7 @@ import {
   Patch,
   Param,
   Delete,
-  Res,
   UseInterceptors,
-  NotFoundException,
   UploadedFile,
 } from '@nestjs/common';
 import { ArchivoTareaService } from './archivo_tarea.service';
@@ -41,7 +39,10 @@ export class ArchivoTareaController {
   findAll() {
     return this.archivoTareaService.findAll();
   }
-
+  @Get('tarea/:id')
+  findByTarea(@Param('id') idTarea: string) {
+    return this.archivoTareaService.findByTarea(+idTarea);
+  }
   @Get(':id')
   async findOne(@Param('id') id: string) {
     return this.archivoTareaService.findOne(+id);

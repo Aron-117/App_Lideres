@@ -41,11 +41,12 @@ export class ArchivoEntregaController {
   findAll() {
     return this.archivoEntregaService.findAll();
   }
-
+  
   @Get(':id')
   async findOne(@Param('id') id: string) {
     return this.archivoEntregaService.findOne(+id);
   }
+
 
   @Patch(':id')
   update(

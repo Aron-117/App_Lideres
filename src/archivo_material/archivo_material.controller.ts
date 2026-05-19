@@ -1,14 +1,24 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UploadedFile, NotFoundException, Res, UseInterceptors } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UploadedFile,
+  UseInterceptors,
+} from '@nestjs/common';
 import { ArchivoMaterialService } from './archivo_material.service';
 import { CreateArchivoMaterialDto } from './dto/create-archivo_material.dto';
 import { UpdateArchivoMaterialDto } from './dto/update-archivo_material.dto';
-import * as path from 'path';
-import * as fs from 'fs';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { storage } from 'src/files/config/cloudinary.storage';
 @Controller('archivo-material')
 export class ArchivoMaterialController {
-  constructor(private readonly archivoMaterialService: ArchivoMaterialService) {}
+  constructor(
+    private readonly archivoMaterialService: ArchivoMaterialService,
+  ) {}
 
   @Post()
   @UseInterceptors(
@@ -31,10 +41,14 @@ export class ArchivoMaterialController {
   findAll() {
     return this.archivoMaterialService.findAll();
   }
-
+  @Get('material/:id')
+  findByMaterial(@Param('id') idMaterial: string) {
+    return this.archivoMaterialService.findByMaterial(+idMaterial);
+  }
   @Get(':id')
   async findOne(@Param('id') id: string) {
     const archivo = await this.archivoMaterialService.findOne(+id);
+    return archivo;
   }
 
   @Patch(':id')

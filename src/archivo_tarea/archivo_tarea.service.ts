@@ -47,7 +47,11 @@ export class ArchivoTareaService {
   async findAll() {
     return await this.archivoTareaRepository.find();
   }
-
+  async findByTarea(idTarea: number) {
+    return await this.archivoTareaRepository.find({
+      where: { tarea: { id_tarea: idTarea } },
+    });
+  }
   async findOne(id: number) {
     const archivo = await this.archivoTareaRepository.findOneBy({
       id_archivo: id,
