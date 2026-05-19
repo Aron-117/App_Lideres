@@ -7,7 +7,7 @@ import { Curso } from 'src/curso/entities/curso.entity';
 export class Inscripcion {
     @PrimaryGeneratedColumn()
     id_inscripcion: number;
-    @ManyToOne(() => Usuario, usuario => usuario.inscripciones)
+    @ManyToOne(() => Usuario, usuario => usuario.inscripciones, {onDelete: 'CASCADE'})
     @JoinColumn({ name: 'id_usuario' })
     usuario: Usuario
     @ManyToOne(() => Curso, curso => curso.inscripciones,{

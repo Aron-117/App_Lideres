@@ -14,7 +14,7 @@ import {
 export class Material {
     @PrimaryGeneratedColumn()
     id_material: number;
-    @ManyToOne(() => Curso, (curso)=> curso.materiales)
+    @ManyToOne(() => Curso, (curso)=> curso.materiales, {onDelete: 'CASCADE'})
     @JoinColumn({ name: 'id_curso' })
     curso: Curso;
     @Column({ length: 255 })

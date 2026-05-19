@@ -12,7 +12,7 @@ import {
 export class ArchivoEntrega {
     @PrimaryGeneratedColumn()
     id_archivo: number;
-    @ManyToOne(() => Entrega, entrega => entrega.archivos)
+    @ManyToOne(() => Entrega, entrega => entrega.archivos, { onDelete: 'CASCADE' })
     @JoinColumn({ name: 'id_entrega' })
     entrega: Entrega;
     @Column({ length: 255 })

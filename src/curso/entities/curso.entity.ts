@@ -25,7 +25,7 @@ export class Curso {
     fecha_fin: Date;
     @Column()
     cupos: number;
-    @ManyToOne(() => Usuario, usuario => usuario.id_usuario)
+    @ManyToOne(() => Usuario, usuario => usuario.id_usuario, {onDelete: 'SET NULL'})
     @JoinColumn({ name: 'id_usuario' })
     profesor: Usuario;
     @OneToMany(() => Tarea, tarea => tarea.curso)

@@ -19,7 +19,7 @@ export class Entrega {
     @ManyToOne(() => Tarea, tarea => tarea.entregas)
     @JoinColumn({ name: 'id_tarea' })
     tarea: Tarea;
-    @ManyToOne(() => Usuario, usuario => usuario.entregas)
+    @ManyToOne(() => Usuario, usuario => usuario.entregas, {onDelete: 'CASCADE'})
     @JoinColumn({ name: 'id_usuario' })
     usuario: Usuario;
     @Column()
