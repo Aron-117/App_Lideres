@@ -17,12 +17,12 @@ export class EntregaService {
     @InjectRepository(Usuario)
     private readonly usuarioRepository: Repository<Usuario>,
   ) {}
-  async create(createEntregaDto: CreateEntregaDto) {
+  async create(createEntregaDto: CreateEntregaDto, id_usuario: number) {
     const tarea = await this.tareaRepository.findOneBy({
       id_tarea: createEntregaDto.id_tarea,
     });
     const usuario = await this.usuarioRepository.findOneBy({
-      id_usuario: createEntregaDto.id_usuario,
+      id_usuario: id_usuario,
     });
     if (!usuario) {
       throw new NotFoundException('Usuario no encontrado');
@@ -35,6 +35,13 @@ export class EntregaService {
       tarea,
       usuario,
     });
+    const existente = await this.entregaRepository.findOne({
+      where: {
+        tarea: { id_tarea: createEntregaDto.id_tarea },
+        usuario: { id_usuario: id_usuario },
+      },
+    });
+    if (existente) return this.findOne(existente.id_entrega);
     entrega.calificacion = Number(entrega.calificacion);
     return this.entregaRepository.save(entrega);
   }
@@ -52,6 +59,14 @@ export class EntregaService {
   async findByUsuario(options: { id_usuario: number }) {
     return await this.entregaRepository.find({
       where: { usuario: { id_usuario: options.id_usuario } },
+    });
+  }
+  async findPersonalTarea(id_tarea: number, id_usuario: number) {
+    return await this.entregaRepository.findOne({
+      where: {
+        tarea: { id_tarea: id_tarea },
+        usuario: { id_usuario: id_usuario },
+      },
     });
   }
   async update(id: number, updateEntregaDto: UpdateEntregaDto) {

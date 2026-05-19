@@ -20,7 +20,6 @@ export class TareaController {
   findPendientes(@Req() req) {
     return this.tareaService.findPendientes(req.user?.sub);
   }
-
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.tareaService.findOne(+id);

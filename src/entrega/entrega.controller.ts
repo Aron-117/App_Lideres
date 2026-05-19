@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Req,
+} from '@nestjs/common';
 import { EntregaService } from './entrega.service';
 import { CreateEntregaDto } from './dto/create-entrega.dto';
 import { UpdateEntregaDto } from './dto/update-entrega.dto';
@@ -8,15 +17,18 @@ export class EntregaController {
   constructor(private readonly entregaService: EntregaService) {}
 
   @Post()
-  create(@Body() createEntregaDto: CreateEntregaDto) {
-    return this.entregaService.create(createEntregaDto);
+  create(@Body() createEntregaDto: CreateEntregaDto, @Req() req) {
+    return this.entregaService.create(createEntregaDto, req.user?.sub);
   }
 
   @Get()
   findAll() {
     return this.entregaService.findAll();
   }
-
+  @Get('tarea/:id')
+  findEntregaPersonal(@Param('id') id: number, @Req() req) {
+    return this.entregaService.findPersonalTarea(+id, req.user?.sub);
+  }
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.entregaService.findOne(+id);
