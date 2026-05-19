@@ -62,12 +62,14 @@ export class EntregaService {
     });
   }
   async findPersonalTarea(id_tarea: number, id_usuario: number) {
-    return await this.entregaRepository.findOne({
+    const existente = await this.entregaRepository.findOne({
       where: {
         tarea: { id_tarea: id_tarea },
         usuario: { id_usuario: id_usuario },
       },
     });
+    if (!existente) return existente;
+    return this.findOne(existente.id_entrega);
   }
   async update(id: number, updateEntregaDto: UpdateEntregaDto) {
     const entrega = await this.entregaRepository.findOneBy({ id_entrega: id });
