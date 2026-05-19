@@ -29,6 +29,10 @@ export class EntregaController {
   findEntregaPersonal(@Param('id') id: number, @Req() req) {
     return this.entregaService.findPersonalTarea(+id, req.user?.sub);
   }
+  @Get('tarea/:id/todas')
+  findAllByTarea(@Param('id') id: number) {
+    return this.entregaService.findAllByTarea(+id);
+  }
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.entregaService.findOne(+id);

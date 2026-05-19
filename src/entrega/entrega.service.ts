@@ -61,6 +61,15 @@ export class EntregaService {
       where: { usuario: { id_usuario: options.id_usuario } },
     });
   }
+  async findAllByTarea(idTarea: number) {
+    return await this.entregaRepository.find({
+      where: {
+        tarea: { id_tarea: idTarea },
+      },
+      relations: ['usuario', 'archivos'],
+      order: { fecha_entrega: 'DESC' },
+    });
+  }
   async findPersonalTarea(id_tarea: number, id_usuario: number) {
     const existente = await this.entregaRepository.findOne({
       where: {
