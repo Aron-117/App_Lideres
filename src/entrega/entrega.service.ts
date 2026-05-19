@@ -69,7 +69,8 @@ export class EntregaService {
       },
     });
     if (!existente) return { entrega: null, entregado: false };
-    return { entrega: this.findOne(existente.id_entrega), entregado: true };
+    const entrega = await this.findOne(existente.id_entrega);
+    return { entrega: entrega, entregado: true };
   }
   async update(id: number, updateEntregaDto: UpdateEntregaDto) {
     const entrega = await this.entregaRepository.findOneBy({ id_entrega: id });
