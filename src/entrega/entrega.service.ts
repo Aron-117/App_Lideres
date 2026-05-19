@@ -68,8 +68,8 @@ export class EntregaService {
         usuario: { id_usuario: id_usuario },
       },
     });
-    if (!existente) return existente;
-    return this.findOne(existente.id_entrega);
+    if (!existente) return { entrega: null, entregado: false };
+    return { entrega: this.findOne(existente.id_entrega), entregado: true };
   }
   async update(id: number, updateEntregaDto: UpdateEntregaDto) {
     const entrega = await this.entregaRepository.findOneBy({ id_entrega: id });
