@@ -1,10 +1,20 @@
 /* eslint-disable prettier/prettier */
-import { IsDateString, IsDecimal, IsInt, IsString, } from "class-validator";
+import {
+  IsDecimal,
+  IsInt,
+  IsString,
+  IsOptional,
+} from "class-validator";
+
 export class CreateEntregaDto {
-    @IsInt()
-    id_tarea: number;
-    @IsDecimal()
-    calificacion?: number;
-    @IsString()
-    comentario_profesor?: string;
+  @IsInt()
+  id_tarea: number;
+
+  @IsOptional()
+  @IsDecimal()
+  calificacion?: number;
+
+  @IsOptional()
+  @IsString()
+  comentario_profesor?: string;
 }
