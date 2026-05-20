@@ -44,7 +44,7 @@ export class InscripcionService {
     const inscripcion = this.inscripcionRepository.create({
       usuario: { id_usuario: createInscripcionDto.id_usuario },
       curso: { id_curso: createInscripcionDto.id_curso },
-      fecha_inscripcion: createInscripcionDto.fecha_inscripcion,
+      fecha_inscripcion: new Date(),
       estado: createInscripcionDto.estado,
     });
     return await this.inscripcionRepository.save(inscripcion);

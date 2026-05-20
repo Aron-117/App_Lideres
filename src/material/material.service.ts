@@ -23,6 +23,7 @@ export class MaterialService {
     }
     const material = this.materialRepository.create({
       curso: { id_curso: createMaterialDto.id_curso },
+      fecha_subida: new Date(),
       ...createMaterialDto,
     });
     return await this.materialRepository.save(material);

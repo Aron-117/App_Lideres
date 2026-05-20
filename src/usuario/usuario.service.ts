@@ -21,6 +21,7 @@ export class UsuarioService {
       throw new ConflictException('Correo existente');
     }
     const usuario = this.usuarioRepository.create(createUsuarioDto);
+    usuario.fecha_registro = new Date();
     return await this.usuarioRepository.save(usuario);
   }
 

@@ -13,6 +13,4 @@ export class CreateUsuarioDto {
     @IsString()
     @MinLength(4)
     rol: string;
-    @IsDateString()
-    fecha_registro: Date;
 }

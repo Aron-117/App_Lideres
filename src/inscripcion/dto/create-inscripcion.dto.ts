@@ -5,8 +5,6 @@ export class CreateInscripcionDto {
     id_usuario: number;
     @IsInt()
     id_curso: number;
-    @IsDateString()
-    fecha_inscripcion: Date;
     @IsString()
     estado: string;
 }

@@ -7,8 +7,6 @@ export class CreateMaterialDto {
     titulo: string;
     @IsString()
     descripcion: string;
-    @IsDateString()
-    fecha_subida: Date;
     @IsInt()
     id_curso: number;
 }
