@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { CreateTareaDto } from './dto/create-tarea.dto';
 import { UpdateTareaDto } from './dto/update-tarea.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -17,12 +21,17 @@ export class TareaService {
     @InjectRepository(Curso)
     private cursoRepository: Repository<Curso>,
   ) {}
-  async create(createTareaDto: CreateTareaDto) {
+  async create(createTareaDto: CreateTareaDto, idProfesor: number) {
     const curso = await this.cursoRepository.findOneBy({
       id_curso: createTareaDto.id_curso,
     });
     if (!curso) {
       throw new NotFoundException('Curso no encontrado');
+    }
+    if (curso.profesor.id_usuario != idProfesor) {
+      throw new UnauthorizedException(
+        'No estas autorizado para realizar esta acción',
+      );
     }
     const tarea = this.tareaRepository.create({
       curso: { id_curso: createTareaDto.id_curso },

@@ -1,28 +1,35 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { MaterialService } from './material.service';
 import { CreateMaterialDto } from './dto/create-material.dto';
 import { UpdateMaterialDto } from './dto/update-material.dto';
+import { RolesGuard } from 'src/auth/decorators/roles.guard';
+import { Roles } from 'src/auth/decorators/roles.decorator';
 
+@UseGuards(RolesGuard)
 @Controller('material')
 export class MaterialController {
   constructor(private readonly materialService: MaterialService) {}
 
   @Post()
+  @Roles('Profesor')
   create(@Body() createMaterialDto: CreateMaterialDto) {
     return this.materialService.create(createMaterialDto);
   }
 
   @Get()
+  @Roles('Admin')
   findAll() {
     return this.materialService.findAll();
   }
 
   @Get(':id')
+  @Roles('Admin', 'Profesor')
   findOne(@Param('id') id: string) {
     return this.materialService.findOne(+id);
   }
 
   @Patch(':id')
+  @Roles('Admin', 'Profesor')
   update(
     @Param('id') id: string,
     @Body() updateMaterialDto: UpdateMaterialDto,
@@ -31,6 +38,7 @@ export class MaterialController {
   }
 
   @Delete(':id')
+  @Roles('Admin', 'Profesor')
   remove(@Param('id') id: string) {
     return this.materialService.remove(+id);
   }

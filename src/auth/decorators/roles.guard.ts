@@ -24,7 +24,6 @@ export class RolesGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
     const user = request.user;
 
-    // 4. Si no hay usuario o no tiene rol en su token, le negamos el paso
     if (!user || !user.rol) {
       throw new ForbiddenException(
         'No tienes los permisos necesarios para realizar esta acción.',

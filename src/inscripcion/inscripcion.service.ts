@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateInscripcionDto } from './dto/create-inscripcion.dto';
 import { UpdateInscripcionDto } from './dto/update-inscripcion.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -39,7 +43,7 @@ export class InscripcionService {
       },
     });
     if (duplicate) {
-      throw new NotFoundException(`El usuario ya está inscrito en este curso`);
+      throw new ConflictException(`El usuario ya está inscrito en este curso`);
     }
     const inscripcion = this.inscripcionRepository.create({
       usuario: { id_usuario: createInscripcionDto.id_usuario },
@@ -47,6 +51,13 @@ export class InscripcionService {
       fecha_inscripcion: new Date(),
       estado: createInscripcionDto.estado,
     });
+    const inscripcionesDelCurso = await this.inscripcionRepository.count({
+      where: { curso: curso },
+    });
+    const cupos = curso.cupos;
+    if (inscripcionesDelCurso >= cupos) {
+      throw new ConflictException('No hay cupos disponibles');
+    }
     return await this.inscripcionRepository.save(inscripcion);
   }
 
