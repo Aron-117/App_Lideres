@@ -24,9 +24,9 @@ export class Entrega {
     usuario: Usuario;
     @Column()
     fecha_entrega: Date;
-    @Column({nullable: true})
+    @Column({ type: 'int', nullable: true})
     calificacion: number;
-    @Column({ length: 1000, nullable: true })
+    @Column({ type: 'varchar', length: 1000, nullable: true })
     comentario_profesor: string;
     @OneToMany(() => ArchivoEntrega, archivoEntrega => archivoEntrega.entrega)
     archivos: ArchivoEntrega[];

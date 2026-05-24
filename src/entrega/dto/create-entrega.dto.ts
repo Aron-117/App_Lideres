@@ -16,9 +16,9 @@ export class CreateEntregaDto {
   @IsNumber()
   @Max(100)
   @Min(0)
-  calificacion?: number;
+  calificacion?: number | null;
 
   @IsOptional()
   @IsString()
-  comentario_profesor?: string;
+  comentario_profesor?: string | null;
 }
