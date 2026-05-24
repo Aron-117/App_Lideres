@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { CreateArchivoEntregaDto } from './dto/create-archivo_entrega.dto';
 import { UpdateArchivoEntregaDto } from './dto/update-archivo_entrega.dto';
@@ -29,12 +30,21 @@ export class ArchivoEntregaService {
     if (!fileData) {
       throw new BadRequestException('Archivo requerido');
     }
-    const entrega = await this.entregaRepository.findOneBy({
-      id_entrega: createArchivoEntregaDto.id_entrega,
+    const entrega = await this.entregaRepository.findOne({
+      where: { id_entrega: createArchivoEntregaDto.id_entrega },
+      relations: ['tarea'],
     });
     if (!entrega) {
       throw new NotFoundException('Entrega no encontrada');
     }
+    const fechaLim = entrega.tarea.fecha_entrega;
+    const fechaActual = new Date();
+    if (fechaActual.getTime() > fechaLim.getTime()) {
+      throw new UnauthorizedException('Ya vencio la fecha de entrega');
+    }
+    await this.entregaRepository.update(entrega.id_entrega, {
+      fecha_entrega: fechaActual,
+    });
     const archivoEntrega = this.archivoEntregaRepository.create({
       nombre_archivo: fileData.nombre_archivo,
       url: fileData.url,

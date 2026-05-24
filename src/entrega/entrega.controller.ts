@@ -48,7 +48,7 @@ export class EntregaController {
   }
 
   @Patch(':id')
-  @Roles('Estudiante', 'Profesor', 'Admin')
+  @Roles('Profesor', 'Admin')
   update(@Param('id') id: string, @Body() updateEntregaDto: UpdateEntregaDto) {
     return this.entregaService.update(+id, updateEntregaDto);
   }
