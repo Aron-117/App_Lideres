@@ -28,12 +28,14 @@ export class UsuarioService {
   async findAll(): Promise<Usuario[]> {
     return await this.usuarioRepository.find();
   }
-
   async findOne(id: number): Promise<Usuario | null> {
     return await this.usuarioRepository.findOne({ where: { id_usuario: id } });
   }
   async findEstudiantes() {
     return await this.usuarioRepository.find({ where: { rol: 'Estudiante' } });
+  }
+  async findProfesores() {
+    return await this.usuarioRepository.find({ where: { rol: 'Profesor' } });
   }
   async findOneByEmail(email: string) {
     return await this.usuarioRepository.findOneBy({ correo: email });

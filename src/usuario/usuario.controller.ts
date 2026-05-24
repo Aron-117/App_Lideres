@@ -34,6 +34,11 @@ export class UsuarioController {
   findEstudiantes() {
     return this.usuarioService.findEstudiantes();
   }
+  @Get('profesores')
+  @Roles('Admin')
+  findProfesores() {
+    return this.usuarioService.findProfesores();
+  }
   @Get(':id')
   @Roles('Admin')
   findOne(@Param('id') id: string) {

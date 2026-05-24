@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } from '@nestjs/common';
 import { MaterialService } from './material.service';
 import { CreateMaterialDto } from './dto/create-material.dto';
 import { UpdateMaterialDto } from './dto/update-material.dto';
@@ -12,8 +12,8 @@ export class MaterialController {
 
   @Post()
   @Roles('Profesor')
-  create(@Body() createMaterialDto: CreateMaterialDto) {
-    return this.materialService.create(createMaterialDto);
+  create(@Body() createMaterialDto: CreateMaterialDto, @Req() req) {
+    return this.materialService.create(createMaterialDto, req.user?.sub);
   }
 
   @Get()

@@ -22,8 +22,9 @@ export class TareaService {
     private cursoRepository: Repository<Curso>,
   ) {}
   async create(createTareaDto: CreateTareaDto, idProfesor: number) {
-    const curso = await this.cursoRepository.findOneBy({
-      id_curso: createTareaDto.id_curso,
+    const curso = await this.cursoRepository.findOne({
+      where: { id_curso: createTareaDto.id_curso },
+      relations: ['profesor'],
     });
     if (!curso) {
       throw new NotFoundException('Curso no encontrado');
