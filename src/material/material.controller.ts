@@ -23,7 +23,6 @@ export class MaterialController {
   }
 
   @Get(':id')
-  @Roles('Admin', 'Profesor')
   findOne(@Param('id') id: string) {
     return this.materialService.findOne(+id);
   }
