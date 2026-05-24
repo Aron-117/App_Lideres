@@ -36,7 +36,6 @@ export class TareaController {
     return this.tareaService.findPendientes(req.user?.sub);
   }
   @Get(':id')
-  @Roles('Admin', 'Profesor')
   findOne(@Param('id') id: string) {
     return this.tareaService.findOne(+id);
   }
