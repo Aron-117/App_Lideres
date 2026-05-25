@@ -11,4 +11,6 @@ export class CreateTareaDto {
     fecha_entrega: Date;
     @IsInt()
     id_curso: number;
+    @IsInt()
+    calificacion: number;
 }

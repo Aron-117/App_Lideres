@@ -26,6 +26,8 @@ export class Tarea {
     fecha_publicacion: Date;
     @Column()
     fecha_entrega: Date;
+    @Column({nullable: true})
+    calificacion: number;
     @OneToMany(() => Entrega, entrega => entrega.tarea)
     entregas: Entrega[];
     @OneToMany(() => ArchivoTarea, archivoTarea => archivoTarea.tarea)
