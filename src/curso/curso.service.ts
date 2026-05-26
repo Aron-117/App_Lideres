@@ -1,4 +1,8 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateCursoDto } from './dto/create-curso.dto';
 import { UpdateCursoDto } from './dto/update-curso.dto';
 import { Curso } from './entities/curso.entity';
@@ -54,7 +58,7 @@ export class CursoService {
   async findRecursos(id: number) {
     const curso = await this.cursoRepository.findOne({
       where: { id_curso: id },
-      relations: ['tareas'],
+      relations: { tareas: true },
     });
     const tareasConTipo = (curso?.tareas || []).map((tarea) => ({
       ...tarea,
@@ -63,7 +67,7 @@ export class CursoService {
     }));
     const cursoM = await this.cursoRepository.findOne({
       where: { id_curso: id },
-      relations: ['materiales'],
+      relations: { materiales: true },
     });
     const materialesConTipo = (cursoM?.materiales || []).map((material) => ({
       ...material,

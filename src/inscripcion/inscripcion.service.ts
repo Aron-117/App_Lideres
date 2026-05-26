@@ -71,7 +71,7 @@ export class InscripcionService {
   async findCursosByEstudianteId(estudianteId: number) {
     const inscripciones = await this.inscripcionRepository.find({
       where: { usuario: { id_usuario: estudianteId } },
-      relations: ['curso'],
+      relations: { curso: true },
     });
     return inscripciones.map((inscripcion) => ({
       ...inscripcion.curso,

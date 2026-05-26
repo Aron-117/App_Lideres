@@ -25,7 +25,9 @@ export class TareaService {
   async create(createTareaDto: CreateTareaDto, idProfesor: number) {
     const curso = await this.cursoRepository.findOne({
       where: { id_curso: createTareaDto.id_curso },
-      relations: ['profesor'],
+      relations: {
+        profesor: true,
+      },
     });
     if (!curso) {
       throw new NotFoundException('Curso no encontrado');
@@ -57,7 +59,10 @@ export class TareaService {
   async findOne(id: number) {
     return await this.tareaRepository.findOne({
       where: { id_tarea: id },
-      relations: ['archivos'],
+      relations: {
+        archivos: true,
+        curso: true,
+      },
     });
   }
   async findPendientes(id_usuario: number) {
@@ -75,6 +80,7 @@ export class TareaService {
         'entrega.usuario.id_usuario = :id_usuario AND entrega.tarea.id_tarea = tarea.id_tarea',
         { id_usuario },
       )
+      .select(['tarea', 'curso.id_curso'])
       .where('inscripcion.id_usuario = :id_usuario', { id_usuario })
       .andWhere('entrega.id_entrega IS NULL')
       .orderBy('tarea.fecha_entrega', 'ASC')

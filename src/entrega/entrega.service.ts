@@ -1,4 +1,8 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateEntregaDto } from './dto/create-entrega.dto';
 import { UpdateEntregaDto } from './dto/update-entrega.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -38,7 +42,7 @@ export class EntregaService {
     });
     if (existente) return this.findOne(existente.id_entrega);
     const entrega = this.entregaRepository.create({
-      ...createEntregaDto as any,
+      ...(createEntregaDto as any),
       fecha_entrega: new Date(),
       tarea,
       usuario,
@@ -53,7 +57,7 @@ export class EntregaService {
   async findOne(id: number) {
     return await this.entregaRepository.findOne({
       where: { id_entrega: id },
-      relations: ['archivos'],
+      relations: { archivos: true },
     });
   }
   async findByUsuario(options: { id_usuario: number }) {
@@ -66,7 +70,7 @@ export class EntregaService {
       where: {
         tarea: { id_tarea: idTarea },
       },
-      relations: ['usuario', 'archivos'],
+      relations: { usuario: true, archivos: true },
       order: { fecha_entrega: 'DESC' },
     });
   }
@@ -84,7 +88,7 @@ export class EntregaService {
   async update(id: number, updateEntregaDto: UpdateEntregaDto) {
     const entrega = await this.entregaRepository.findOne({
       where: { id_entrega: id },
-      relations: ['tarea'],
+      relations: { tarea: true },
     });
     if (!entrega) {
       throw new NotFoundException('Entrega no encontrada');

@@ -32,7 +32,7 @@ export class ArchivoEntregaService {
     }
     const entrega = await this.entregaRepository.findOne({
       where: { id_entrega: createArchivoEntregaDto.id_entrega },
-      relations: ['tarea'],
+      relations: { tarea: true },
     });
     if (!entrega) {
       throw new NotFoundException('Entrega no encontrada');

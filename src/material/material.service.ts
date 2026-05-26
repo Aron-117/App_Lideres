@@ -3,7 +3,11 @@ import { UpdateMaterialDto } from './dto/update-material.dto';
 import { Material } from './entities/material.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm/dist/common/typeorm.decorators';
-import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { Curso } from 'src/curso/entities/curso.entity';
 
 @Injectable()
@@ -17,7 +21,9 @@ export class MaterialService {
   async create(createMaterialDto: CreateMaterialDto, id_usuario: number) {
     const curso = await this.cursoRepository.findOne({
       where: { id_curso: createMaterialDto.id_curso },
-      relations: ['profesor'],
+      relations: {
+        profesor: true,
+      },
     });
     if (!curso) {
       throw new NotFoundException('Curso no encontrado');
@@ -39,7 +45,9 @@ export class MaterialService {
   async findOne(id: number) {
     return await this.materialRepository.findOne({
       where: { id_material: id },
-      relations: ['archivos'],
+      relations: {
+        archivos: true,
+      },
     });
   }
 
