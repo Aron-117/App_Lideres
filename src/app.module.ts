@@ -16,6 +16,7 @@ import { FilesModule } from './files/files.module';
 import { ConfigModule } from '@nestjs/config';
 import { MulterModule } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
+import { LogAccesoModule } from './log-acceso/log-acceso.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { diskStorage } from 'multer';
     ArchivoTareaModule,
     ArchivoMaterialModule,
     ArchivoEntregaModule,
+    LogAccesoModule,
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.DB_HOST,
@@ -48,6 +50,7 @@ import { diskStorage } from 'multer';
     }),
     AuthModule,
     FilesModule,
+    LogAccesoModule,
   ],
   controllers: [AppController],
   providers: [AppService],

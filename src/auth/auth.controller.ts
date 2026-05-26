@@ -1,20 +1,71 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Post, UseGuards, Request } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Post,
+  UseGuards,
+  Request,
+  Ip,
+  Headers,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
+import { UsuarioService } from 'src/usuario/usuario.service';
 import { AuthGuard, Public } from './auth.guard';
+import { LogAccesoService } from 'src/log-acceso/log-acceso.service';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly LogAccesoService: LogAccesoService,
+    private readonly UsuarioService: UsuarioService,
+  ) {}
   @Public()
   @HttpCode(HttpStatus.OK)
   @Post('login')
   async login(@Body() signInDto: Record<string, any>) {
-    return await this.authService.login(signInDto.correo, signInDto.password);
+    const result = await this.authService.login(
+      signInDto.correo,
+      signInDto.password,
+    );
+    return result;
   }
 
   @UseGuards(AuthGuard)
   @Get('profile')
-  getProfile(@Request() req) {
+  async getProfile(
+    @Request() req,
+    @Ip() ip: string,
+    @Headers('user-agent') browser: string,
+  ) {
+    const usuario = await this.UsuarioService.findOne(req.user?.id);
+    await this.LogAccesoService.create({
+      usuario: usuario?.nombre || 'Usuario no reconocido',
+      ip: ip,
+      evento: 'ingreso',
+      browser: browser || 'Desconocido',
+      fecha: new Date(),
+    });
     return req.user;
+  }
+
+  @UseGuards(AuthGuard)
+  @Post('logout')
+  async logout(
+    @Request() req,
+    @Ip() ip: string,
+    @Headers('user-agent') browser: string,
+  ) {
+    const usuario = await this.UsuarioService.findOne(req.user?.id);
+    await this.LogAccesoService.create({
+      usuario: usuario?.nombre || 'Usuario no reconocido',
+      ip: ip,
+      evento: 'salida',
+      browser: browser || 'Desconocido',
+      fecha: new Date(),
+    });
+    return { message: 'Log de salida registrado con exito' };
   }
 }
