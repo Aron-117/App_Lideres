@@ -97,7 +97,6 @@ export class EntregaService {
         `No es posible que la calificacion sea mayor a ${entrega.tarea.calificacion}`,
       );
     }
-    entrega.fecha_entrega = new Date();
     this.entregaRepository.merge(entrega, updateEntregaDto as any);
     return await this.entregaRepository.save(entrega);
   }
