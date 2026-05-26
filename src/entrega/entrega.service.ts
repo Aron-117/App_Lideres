@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateEntregaDto } from './dto/create-entrega.dto';
 import { UpdateEntregaDto } from './dto/update-entrega.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -82,9 +82,20 @@ export class EntregaService {
     return { entrega: entrega, entregado: true };
   }
   async update(id: number, updateEntregaDto: UpdateEntregaDto) {
-    const entrega = await this.entregaRepository.findOneBy({ id_entrega: id });
+    const entrega = await this.entregaRepository.findOne({
+      where: { id_entrega: id },
+      relations: ['tarea'],
+    });
     if (!entrega) {
       throw new NotFoundException('Entrega no encontrada');
+    }
+    if (
+      updateEntregaDto.calificacion &&
+      updateEntregaDto.calificacion > entrega.tarea.calificacion
+    ) {
+      throw new ConflictException(
+        `No es posible que la calificacion sea mayor a ${entrega.tarea.calificacion}`,
+      );
     }
     entrega.fecha_entrega = new Date();
     this.entregaRepository.merge(entrega, updateEntregaDto as any);

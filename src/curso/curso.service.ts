@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCursoDto } from './dto/create-curso.dto';
 import { UpdateCursoDto } from './dto/update-curso.dto';
 import { Curso } from './entities/curso.entity';
@@ -20,6 +20,12 @@ export class CursoService {
     });
     if (!profesor) {
       throw new NotFoundException('Profesor no encontrado');
+    }
+    const hoy = new Date();
+    const fechaFin = new Date(createCursoDto.fecha_fin);
+    const fechaIni = new Date(createCursoDto.fecha_inicio);
+    if (fechaFin < fechaIni || fechaFin < hoy) {
+      throw new ConflictException('Fecha fin en conflicto');
     }
     const curso = this.cursoRepository.create({
       ...createCursoDto,

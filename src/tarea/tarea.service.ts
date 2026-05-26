@@ -1,4 +1,5 @@
 import {
+  ConflictException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -32,6 +33,13 @@ export class TareaService {
     if (curso.profesor.id_usuario != idProfesor) {
       throw new UnauthorizedException(
         'No estas autorizado para realizar esta acción',
+      );
+    }
+    const hoy = new Date();
+    const fechaInicio = new Date(createTareaDto.fecha_entrega);
+    if (fechaInicio < hoy) {
+      throw new ConflictException(
+        'No es posible que la tarea tenga entrega en el pasado',
       );
     }
     const tarea = this.tareaRepository.create({
@@ -76,6 +84,15 @@ export class TareaService {
     const tarea = await this.tareaRepository.findOneBy({ id_tarea: id });
     if (!tarea) {
       throw new NotFoundException('Tarea no encontrada');
+    }
+    if (updateTareaDto.fecha_entrega) {
+      const hoy = new Date();
+      const fechaInicio = new Date(updateTareaDto.fecha_entrega);
+      if (fechaInicio < hoy) {
+        throw new ConflictException(
+          'No es posible que la tarea tenga entrega en el pasado',
+        );
+      }
     }
     this.tareaRepository.merge(tarea, updateTareaDto);
     return this.tareaRepository.save(tarea);
