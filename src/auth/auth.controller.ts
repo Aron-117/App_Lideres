@@ -40,7 +40,7 @@ export class AuthController {
     @Ip() ip: string,
     @Headers('user-agent') browser: string,
   ) {
-    const usuario = await this.UsuarioService.findOne(req.user?.id);
+    const usuario = await this.UsuarioService.findOne(req.user?.sub);
     await this.LogAccesoService.create({
       usuario: usuario?.nombre || 'Usuario no reconocido',
       ip: ip,
@@ -58,7 +58,7 @@ export class AuthController {
     @Ip() ip: string,
     @Headers('user-agent') browser: string,
   ) {
-    const usuario = await this.UsuarioService.findOne(req.user?.id);
+    const usuario = await this.UsuarioService.findOne(req.user?.sub);
     await this.LogAccesoService.create({
       usuario: usuario?.nombre || 'Usuario no reconocido',
       ip: ip,
