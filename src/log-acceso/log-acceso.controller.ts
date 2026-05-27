@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, UseGuards, Query } from '@nestjs/common';
 import { LogAccesoService } from './log-acceso.service';
 import { CreateLogAccesoDto } from './dto/create-log-acceso.dto';
 import { RolesGuard } from 'src/auth/decorators/roles.guard';
@@ -16,7 +16,10 @@ export class LogAccesoController {
 
   @Roles('Admin')
   @Get()
-  findAll() {
-    return this.logAccesoService.findAll();
+  findAll(
+    @Query('page') page: string = '1',
+    @Query('limit') limit: string = '15',
+  ) {
+    return this.logAccesoService.findAll(Number(page), Number(limit));
   }
 }

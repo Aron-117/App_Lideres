@@ -98,4 +98,71 @@ export class CursoService {
     }
     return await this.cursoRepository.remove(curso);
   }
+  async getEstadisticasCupos() {
+    const estadisticasRaw = await this.cursoRepository
+      .createQueryBuilder('curso')
+      .leftJoin('curso.inscripciones', 'inscripcion')
+      .select(['curso.id_curso', 'curso.nombre', 'curso.cupos'])
+      .addSelect('COUNT(inscripcion.id_inscripcion)', 'cupos_ocupados')
+      .groupBy('curso.id_curso')
+      .getRawMany();
+    return estadisticasRaw.map((curso) => {
+      const totales = Number(curso.curso_cupos);
+      const ocupados = Number(curso.cupos_ocupados);
+      return {
+        id_curso: curso.curso_id_curso,
+        nombre: curso.curso_nombre,
+        cupos_totales: totales,
+        cupos_ocupados: ocupados,
+        cupos_libres: totales - ocupados,
+      };
+    });
+  }
+  async getReporteNotas(id_curso: number) {
+    const curso = await this.cursoRepository.findOne({
+      where: { id_curso },
+      relations: {
+        inscripciones: {
+          usuario: true, // Para saber quiénes son los alumnos
+        },
+        tareas: {
+          entregas: {
+            usuario: true, // Para cruzar la entrega con el alumno
+          },
+        },
+      },
+    });
+    if (!curso) {
+      throw new NotFoundException('Curso no encontrado');
+    }
+    const reporte = curso.inscripciones.map((inscripcion) => {
+      const estudiante = inscripcion.usuario;
+      const filaReporte: any = {
+        Estudiante: estudiante.nombre,
+      };
+
+      let sumaNotas = 0;
+      let cantidadTareas = 0;
+
+      // 3. Revisamos cada tarea del curso para ver si el estudiante la entregó
+      curso.tareas.forEach((tarea) => {
+        // Buscamos la entrega de este estudiante en esta tarea en específico
+        const entrega = tarea.entregas.find(
+          (e) => e.usuario.id_usuario === estudiante.id_usuario
+        );
+        const nota = entrega?.calificacion ?? 0;
+        filaReporte[tarea.titulo] = nota;
+
+        sumaNotas += nota;
+        cantidadTareas++;
+      });
+      filaReporte['Promedio'] =
+        cantidadTareas > 0
+          ? Number((sumaNotas / cantidadTareas).toFixed(2))
+          : 0;
+
+      return filaReporte;
+    });
+    return reporte.sort((a, b) => a.Estudiante.localeCompare(b.Estudiante));
+  }
 }

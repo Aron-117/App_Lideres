@@ -25,7 +25,19 @@ export class AuthController {
   @Public()
   @HttpCode(HttpStatus.OK)
   @Post('login')
-  async login(@Body() signInDto: Record<string, any>) {
+  async login(
+    @Body() signInDto: Record<string, any>,
+    @Ip() ip: string,
+    @Headers('user-agent') browser: string,
+  ) {
+    const usuario = await this.UsuarioService.findOneByEmail(signInDto.correo);
+    await this.LogAccesoService.create({
+      usuario: usuario?.nombre || 'Usuario no reconocido',
+      ip: ip,
+      evento: 'ingreso',
+      browser: browser || 'Desconocido',
+      fecha: new Date(),
+    });
     const result = await this.authService.login(
       signInDto.correo,
       signInDto.password,
@@ -35,19 +47,7 @@ export class AuthController {
 
   @UseGuards(AuthGuard)
   @Get('profile')
-  async getProfile(
-    @Request() req,
-    @Ip() ip: string,
-    @Headers('user-agent') browser: string,
-  ) {
-    const usuario = await this.UsuarioService.findOne(req.user?.sub);
-    await this.LogAccesoService.create({
-      usuario: usuario?.nombre || 'Usuario no reconocido',
-      ip: ip,
-      evento: 'ingreso',
-      browser: browser || 'Desconocido',
-      fecha: new Date(),
-    });
+  getProfile(@Request() req) {
     return req.user;
   }
 

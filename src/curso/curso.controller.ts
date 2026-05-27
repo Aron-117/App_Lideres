@@ -50,6 +50,17 @@ export class CursoController {
       return this.inscripcionService.findCursosByEstudianteId(userId);
     }
   }
+
+  @Get('estadisticas')
+  @Roles('Admin')
+  async getEstadisticas() {
+    return await this.cursoService.getEstadisticasCupos();
+  }
+  @Get(':id/reporte-notas')
+  @Roles('Admin', 'Profesor')
+  async getReporteNotas(@Param('id') id: string) {
+    return await this.cursoService.getReporteNotas(+id);
+  }
   @Get(':id/recursos')
   findRecursos(@Param('id') id: string) {
     return this.cursoService.findRecursos(+id);
