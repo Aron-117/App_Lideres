@@ -32,6 +32,7 @@ export class ArchivoTareaController {
       nombre_archivo: file.originalname,
       url: file.path,
       public_id: file.filename,
+      resource_type: file.resource_type,
     });
   }
 

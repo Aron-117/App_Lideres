@@ -11,10 +11,13 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import type { Response } from 'express';
 
 import { storage } from './config/cloudinary.storage';
-import cloudinary from './config/cloudinary.config';
+import { FilesService } from './files.service'; // 👇 Importamos el servicio
 
 @Controller('files')
 export class FilesController {
+  // 👇 Inyectamos el servicio en el constructor
+  constructor(private readonly filesService: FilesService) {}
+
   @Post('upload')
   @UseInterceptors(
     FileInterceptor('file', {
@@ -22,31 +25,12 @@ export class FilesController {
     }),
   )
   uploadFile(@UploadedFile() file) {
-    const nombre = file.originalname.replace(/[^a-zA-Z0-9.]/g, '_');
-    const resourceType =
-      file.mimetype.startsWith('image/')
-      ? 'image'
-        : file.mimetype.startsWith('video/')
-        ? 'video'
-        : 'raw';
-    return {
-      filename: nombre,
-      url: file.path,
-      publicId: file.filename,
-      resourceType,
-    };
+    return this.filesService.formatUploadedFileData(file);
   }
 
   @Get('download/:publicId')
-  async downloadFile(
-    @Param('publicId') publicId: string,
-    @Res() res: Response,
-  ) {
-    const url = cloudinary.url(publicId, {
-      resource_type: 'auto',
-      secure: true,
-      flags: 'attachment',
-    });
+  downloadFile(@Param('publicId') publicId: string, @Res() res: Response) {
+    const url = this.filesService.getDownloadUrl(publicId);
     return res.redirect(url);
   }
 }

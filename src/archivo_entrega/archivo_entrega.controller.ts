@@ -8,7 +8,6 @@ import {
   Delete,
   UseInterceptors,
   UploadedFile,
-  Res,
 } from '@nestjs/common';
 import { ArchivoEntregaService } from './archivo_entrega.service';
 import { CreateArchivoEntregaDto } from './dto/create-archivo_entrega.dto';
@@ -34,6 +33,7 @@ export class ArchivoEntregaController {
       nombre_archivo: file.originalname,
       url: file.path,
       public_id: file.filename,
+      resource_type: file.resourceType,
     });
   }
 
@@ -41,12 +41,11 @@ export class ArchivoEntregaController {
   findAll() {
     return this.archivoEntregaService.findAll();
   }
-  
+
   @Get(':id')
   async findOne(@Param('id') id: string) {
     return this.archivoEntregaService.findOne(+id);
   }
-
 
   @Patch(':id')
   update(

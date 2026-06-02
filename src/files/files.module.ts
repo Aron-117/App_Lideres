@@ -20,6 +20,6 @@ import { diskStorage } from 'multer';
   ],
   controllers: [FilesController],
   providers: [FilesService],
-  exports: [MulterModule],
+  exports: [MulterModule, FilesService],
 })
 export class FilesModule {}

@@ -10,6 +10,7 @@ import { Entrega } from 'src/entrega/entities/entrega.entity';
 import { ArchivoEntrega } from './entities/archivo_entrega.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { FilesService } from 'src/files/files.service';
 
 @Injectable()
 export class ArchivoEntregaService {
@@ -18,6 +19,7 @@ export class ArchivoEntregaService {
     private readonly archivoEntregaRepository: Repository<ArchivoEntrega>,
     @InjectRepository(Entrega)
     private readonly entregaRepository: Repository<Entrega>,
+    private readonly filesService: FilesService,
   ) {}
   async create(
     createArchivoEntregaDto: CreateArchivoEntregaDto,
@@ -25,6 +27,7 @@ export class ArchivoEntregaService {
       nombre_archivo: string;
       url: string;
       public_id: string;
+      resource_type: string;
     },
   ) {
     if (!fileData) {
@@ -50,6 +53,7 @@ export class ArchivoEntregaService {
       url: fileData.url,
       public_id: fileData.public_id,
       entrega: entrega,
+      resource_type: fileData.resource_type,
     });
     return await this.archivoEntregaRepository.save(archivoEntrega);
   }
@@ -82,6 +86,16 @@ export class ArchivoEntregaService {
     if (!archivoEntrega) {
       throw new NotFoundException('Archivo de entrega no encontrado');
     }
-    return await this.archivoEntregaRepository.remove(archivoEntrega);
+    try {
+      if (archivoEntrega.public_id) {
+        await this.filesService.deleteFile(
+          archivoEntrega.public_id,
+          archivoEntrega.resource_type as 'image' | 'video' | 'raw',
+        );
+        return await this.archivoEntregaRepository.remove(archivoEntrega);
+      }
+    } catch (error) {
+      throw new Error(`Error en la elminacion del archivo`);
+    }
   }
 }

@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateArchivoMaterialDto } from './dto/create-archivo_material.dto';
 import { UpdateArchivoMaterialDto } from './dto/update-archivo_material.dto';
 import { ArchivoMaterial } from './entities/archivo_material.entity';
@@ -20,6 +24,7 @@ export class ArchivoMaterialService {
       nombre_archivo: string;
       url: string;
       public_id: string;
+      resource_type: string;
     },
   ) {
     if (!fileData) {
@@ -36,6 +41,7 @@ export class ArchivoMaterialService {
       url: fileData.url,
       public_id: fileData.public_id,
       material: material,
+      resource_type: fileData.resource_type,
     });
     return await this.archivoMaterialRepository.save(archivoMaterial);
   }

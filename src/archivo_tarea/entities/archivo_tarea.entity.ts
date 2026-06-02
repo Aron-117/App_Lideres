@@ -21,4 +21,6 @@ export class ArchivoTarea {
     url: string;
     @Column()
     public_id: string;
+    @Column({default: 'raw'})
+    resource_type: string;
 }

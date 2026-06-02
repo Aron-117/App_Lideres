@@ -24,6 +24,7 @@ export class ArchivoTareaService {
       nombre_archivo: string;
       url: string;
       public_id: string;
+      resource_type: string;
     },
   ) {
     if (!fileData) {
@@ -40,6 +41,7 @@ export class ArchivoTareaService {
       url: fileData.url,
       public_id: fileData.public_id,
       tarea: tarea,
+      resource_type: fileData.resource_type,
     });
     return await this.archivoTareaRepository.save(archivoTarea);
   }

@@ -21,4 +21,6 @@ export class ArchivoEntrega {
     url: string;
     @Column({nullable: true})
     public_id: string;
+    @Column({ default: 'raw' })
+    resource_type: string;
 }
