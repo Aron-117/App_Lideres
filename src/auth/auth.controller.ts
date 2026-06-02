@@ -33,17 +33,19 @@ export class AuthController {
   ) {
     const ip = forwarderFor ? forwarderFor.split(',')[0].trim() : ipServer;
     const usuario = await this.UsuarioService.findOneByEmail(signInDto.correo);
-    await this.LogAccesoService.create({
-      usuario: usuario?.nombre || 'Usuario no reconocido',
-      ip: ip,
-      evento: 'ingreso',
-      browser: browser || 'Desconocido',
-      fecha: new Date(),
-    });
     const result = await this.authService.login(
       signInDto.correo,
       signInDto.password,
     );
+    if (result) {
+      await this.LogAccesoService.create({
+        usuario: usuario?.nombre || 'Usuario no reconocido',
+        ip: ip,
+        evento: 'ingreso',
+        browser: browser || 'Desconocido',
+        fecha: new Date(),
+      });
+    }
     return result;
   }
 

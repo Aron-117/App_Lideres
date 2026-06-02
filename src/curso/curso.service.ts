@@ -148,7 +148,7 @@ export class CursoService {
       curso.tareas.forEach((tarea) => {
         // Buscamos la entrega de este estudiante en esta tarea en específico
         const entrega = tarea.entregas.find(
-          (e) => e.usuario.id_usuario === estudiante.id_usuario
+          (e) => e.usuario.id_usuario === estudiante.id_usuario,
         );
         const nota = entrega?.calificacion ?? 0;
         filaReporte[tarea.titulo] = nota;
