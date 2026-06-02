@@ -27,9 +27,11 @@ export class AuthController {
   @Post('login')
   async login(
     @Body() signInDto: Record<string, any>,
-    @Ip() ip: string,
+    @Ip() ipServer: string,
+    @Headers('x-forwarded-for') forwarderFor: string,
     @Headers('user-agent') browser: string,
   ) {
+    const ip = forwarderFor ? forwarderFor.split(',')[0].trim() : ipServer;
     const usuario = await this.UsuarioService.findOneByEmail(signInDto.correo);
     await this.LogAccesoService.create({
       usuario: usuario?.nombre || 'Usuario no reconocido',
