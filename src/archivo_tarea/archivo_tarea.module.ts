@@ -7,8 +7,9 @@ import { Tarea } from 'src/tarea/entities/tarea.entity';
 import { FilesModule } from 'src/files/files.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([ArchivoTarea, Tarea]),FilesModule],
+  imports: [TypeOrmModule.forFeature([ArchivoTarea, Tarea]), FilesModule],
   controllers: [ArchivoTareaController],
   providers: [ArchivoTareaService],
+  exports: [ArchivoTareaService],
 })
 export class ArchivoTareaModule {}

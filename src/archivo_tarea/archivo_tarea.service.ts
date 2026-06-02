@@ -9,6 +9,7 @@ import { ArchivoTarea } from './entities/archivo_tarea.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Tarea } from 'src/tarea/entities/tarea.entity';
+import { FilesService } from 'src/files/files.service';
 
 @Injectable()
 export class ArchivoTareaService {
@@ -17,6 +18,7 @@ export class ArchivoTareaService {
     private readonly archivoTareaRepository: Repository<ArchivoTarea>,
     @InjectRepository(Tarea)
     private readonly tareaRepository: Repository<Tarea>,
+    private filesService: FilesService,
   ) {}
   async create(
     createArchivoTareaDto: CreateArchivoTareaDto,
@@ -80,6 +82,14 @@ export class ArchivoTareaService {
     if (!archivoTarea) {
       throw new NotFoundException('Archivo de tarea no encontrado');
     }
-    return await this.archivoTareaRepository.remove(archivoTarea);
+    try {
+      await this.filesService.deleteFile(
+        archivoTarea.public_id,
+        archivoTarea.resource_type as 'image' | 'video' | 'raw',
+      );
+      return await this.archivoTareaRepository.remove(archivoTarea);
+    } catch {
+      throw new Error('Archivo no eliminado');
+    }
   }
 }

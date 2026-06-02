@@ -9,6 +9,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { Curso } from 'src/curso/entities/curso.entity';
+import { ArchivoMaterialService } from 'src/archivo_material/archivo_material.service';
 
 @Injectable()
 export class MaterialService {
@@ -17,6 +18,7 @@ export class MaterialService {
     private readonly materialRepository: Repository<Material>,
     @InjectRepository(Curso)
     private readonly cursoRepository: Repository<Curso>,
+    private archivoService: ArchivoMaterialService,
   ) {}
   async create(createMaterialDto: CreateMaterialDto, id_usuario: number) {
     const curso = await this.cursoRepository.findOne({
@@ -66,11 +68,18 @@ export class MaterialService {
   }
 
   async remove(id: number) {
-    const material = await this.materialRepository.findOneBy({
-      id_material: id,
+    const material = await this.materialRepository.findOne({
+      where: { id_material: id },
+      relations: {
+        archivos: true,
+      },
     });
     if (!material) {
       throw new NotFoundException('Material no encontrado');
+    }
+    const archivos = material.archivos;
+    for (const archivo of archivos) {
+      await this.archivoService.remove(archivo.id_archivo);
     }
     return await this.materialRepository.remove(material);
   }

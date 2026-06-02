@@ -10,5 +10,6 @@ import { FilesModule } from 'src/files/files.module';
   imports: [TypeOrmModule.forFeature([ArchivoEntrega, Entrega]), FilesModule],
   controllers: [ArchivoEntregaController],
   providers: [ArchivoEntregaService],
+  exports: [ArchivoEntregaService],
 })
 export class ArchivoEntregaModule {}

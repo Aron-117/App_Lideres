@@ -11,6 +11,7 @@ import { Tarea } from './entities/tarea.entity';
 import { Repository } from 'typeorm';
 import { Usuario } from 'src/usuario/entities/usuario.entity';
 import { Curso } from 'src/curso/entities/curso.entity';
+import { ArchivoTareaService } from 'src/archivo_tarea/archivo_tarea.service';
 
 @Injectable()
 export class TareaService {
@@ -21,6 +22,7 @@ export class TareaService {
     private usuarioRepository: Repository<Usuario>,
     @InjectRepository(Curso)
     private cursoRepository: Repository<Curso>,
+    private archivoService: ArchivoTareaService,
   ) {}
   async create(createTareaDto: CreateTareaDto, idProfesor: number) {
     const curso = await this.cursoRepository.findOne({
@@ -105,9 +107,18 @@ export class TareaService {
   }
 
   async remove(id: number) {
-    const tarea = await this.tareaRepository.findOneBy({ id_tarea: id });
+    const tarea = await this.tareaRepository.findOne({
+      where: { id_tarea: id },
+      relations: {
+        archivos: true,
+      },
+    });
     if (!tarea) {
       throw new NotFoundException('Tarea no encontrada');
+    }
+    const archivos = tarea.archivos;
+    for (const archivo of archivos) {
+      await this.archivoService.remove(archivo.id_archivo);
     }
     return this.tareaRepository.remove(tarea);
   }

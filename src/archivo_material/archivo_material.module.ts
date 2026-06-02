@@ -10,5 +10,6 @@ import { FilesModule } from 'src/files/files.module';
   imports: [TypeOrmModule.forFeature([ArchivoMaterial, Material]), FilesModule],
   controllers: [ArchivoMaterialController],
   providers: [ArchivoMaterialService],
+  exports: [ArchivoMaterialService],
 })
 export class ArchivoMaterialModule {}

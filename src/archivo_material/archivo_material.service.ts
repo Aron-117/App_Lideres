@@ -9,6 +9,7 @@ import { ArchivoMaterial } from './entities/archivo_material.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Material } from 'src/material/entities/material.entity';
+import { FilesService } from 'src/files/files.service';
 
 @Injectable()
 export class ArchivoMaterialService {
@@ -17,6 +18,7 @@ export class ArchivoMaterialService {
     private archivoMaterialRepository: Repository<ArchivoMaterial>,
     @InjectRepository(Material)
     private materialRepository: Repository<Material>,
+    private filesService: FilesService,
   ) {}
   async create(
     createArchivoMaterialDto: CreateArchivoMaterialDto,
@@ -83,6 +85,14 @@ export class ArchivoMaterialService {
     if (!archivoMaterial) {
       throw new NotFoundException('Archivo de material no encontrado');
     }
-    return await this.archivoMaterialRepository.remove(archivoMaterial);
+    try {
+      await this.filesService.deleteFile(
+        archivoMaterial.public_id,
+        archivoMaterial.resource_type as 'image' | 'video' | 'raw',
+      );
+      return await this.archivoMaterialRepository.remove(archivoMaterial);
+    } catch (error) {
+      throw new Error('Archivo no eliminado');
+    }
   }
 }

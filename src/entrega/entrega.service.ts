@@ -10,6 +10,7 @@ import { Entrega } from './entities/entrega.entity';
 import { Repository } from 'typeorm';
 import { Tarea } from 'src/tarea/entities/tarea.entity';
 import { Usuario } from 'src/usuario/entities/usuario.entity';
+import { ArchivoEntregaService } from 'src/archivo_entrega/archivo_entrega.service';
 
 @Injectable()
 export class EntregaService {
@@ -20,6 +21,7 @@ export class EntregaService {
     private readonly tareaRepository: Repository<Tarea>,
     @InjectRepository(Usuario)
     private readonly usuarioRepository: Repository<Usuario>,
+    private readonly archivoService: ArchivoEntregaService,
   ) {}
   async create(createEntregaDto: CreateEntregaDto, id_usuario: number) {
     const tarea = await this.tareaRepository.findOneBy({
@@ -106,9 +108,18 @@ export class EntregaService {
   }
 
   async remove(id: number) {
-    const entrega = await this.entregaRepository.findOneBy({ id_entrega: id });
+    const entrega = await this.entregaRepository.findOne({
+      where: { id_entrega: id },
+      relations: {
+        archivos: true,
+      },
+    });
     if (!entrega) {
       throw new NotFoundException('Entrega no encontrada');
+    }
+    const archivos = entrega.archivos;
+    for (const archivo of archivos) {
+      await this.archivoService.remove(archivo.id_archivo);
     }
     return await this.entregaRepository.remove(entrega);
   }

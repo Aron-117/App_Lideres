@@ -63,7 +63,9 @@ export class ArchivoEntregaService {
   }
 
   async findOne(id: number) {
-    const archivo = await this.archivoEntregaRepository.findOneBy({ id_archivo: id });
+    const archivo = await this.archivoEntregaRepository.findOneBy({
+      id_archivo: id,
+    });
     if (!archivo) throw new NotFoundException('Archivo no econtrado');
     return archivo;
   }
