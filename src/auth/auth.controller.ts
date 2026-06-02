@@ -59,9 +59,11 @@ export class AuthController {
   @Post('logout')
   async logout(
     @Request() req,
-    @Ip() ip: string,
+    @Ip() ipServer: string,
     @Headers('user-agent') browser: string,
+    @Headers('x-forwarded-for') forwarderFor: string,
   ) {
+    const ip = forwarderFor ? forwarderFor.split(',')[0].trim() : ipServer;
     const usuario = await this.UsuarioService.findOne(req.user?.sub);
     await this.LogAccesoService.create({
       usuario: usuario?.nombre || 'Usuario no reconocido',
