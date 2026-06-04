@@ -45,7 +45,14 @@ export class InscripcionController {
   ) {
     return this.inscripcionService.update(+id, updateInscripcionDto);
   }
-
+  @Delete('/estudiante/:idEst/curso/:idCur')
+  @Roles('Admin')
+  removeByStudentAndCourse(
+    @Param('idEst') idEstudiante: string,
+    @Param('idCur') idCurso,
+  ) {
+    return this.inscripcionService.removeBy(+idEstudiante, +idCurso);
+  }
   @Delete(':id')
   @Roles('Admin')
   remove(@Param('id') id: string) {

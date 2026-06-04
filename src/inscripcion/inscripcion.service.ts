@@ -97,4 +97,14 @@ export class InscripcionService {
       throw new NotFoundException(`Inscripcion con id ${id} no encontrada`);
     return await this.inscripcionRepository.remove(inscripcion);
   }
+  async removeBy(idEstudiante: number, idCurso: number) {
+    const inscripcion = await this.inscripcionRepository.findOne({
+      where: {
+        curso: { id_curso: idCurso },
+        usuario: { id_usuario: idEstudiante },
+      },
+    });
+    if (!inscripcion) throw new NotFoundException('Inscripcion no encontrada');
+    await this.inscripcionRepository.delete(inscripcion);
+  }
 }
