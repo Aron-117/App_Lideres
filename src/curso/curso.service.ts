@@ -9,6 +9,7 @@ import { Curso } from './entities/curso.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Usuario } from 'src/usuario/entities/usuario.entity';
+import { Inscripcion } from 'src/inscripcion/entities/inscripcion.entity';
 
 @Injectable()
 export class CursoService {
@@ -16,10 +17,12 @@ export class CursoService {
     @InjectRepository(Curso)
     private readonly cursoRepository: Repository<Curso>,
     @InjectRepository(Usuario)
-    private readonly usuarioRespository: Repository<Usuario>,
+    private readonly usuarioRepository: Repository<Usuario>,
+    @InjectRepository(Inscripcion)
+    private readonly inscripcionRepository: Repository<Inscripcion>,
   ) {}
   async create(createCursoDto: CreateCursoDto) {
-    const profesor = await this.usuarioRespository.findOneBy({
+    const profesor = await this.usuarioRepository.findOneBy({
       id_usuario: createCursoDto.id_profesor,
     });
     if (!profesor) {
@@ -37,13 +40,22 @@ export class CursoService {
     });
     return await this.cursoRepository.save(curso);
   }
-
+  async getEstudiantes(idCurso: number) {
+    const inscripciones = await this.inscripcionRepository.find({
+      where: { curso: { id_curso: idCurso } },
+      relations: { usuario: true },
+    });
+    return inscripciones;
+  }
   async findAll() {
-    return await this.cursoRepository.find();
+    return await this.cursoRepository.find({ relations: { profesor: true } });
   }
 
   async findOne(id: number) {
-    return await this.cursoRepository.findOneBy({ id_curso: id });
+    return await this.cursoRepository.findOne({
+      where: { id_curso: id },
+      relations: { profesor: true },
+    });
   }
 
   async findMyCursos(userId: number) {
@@ -83,9 +95,15 @@ export class CursoService {
     return repuesta;
   }
   async update(id: number, updateCursoDto: UpdateCursoDto) {
-    const curso = await this.cursoRepository.findOneBy({ id_curso: id });
+    const curso = await this.cursoRepository.findOne({
+      where: { id_curso: id },
+      relations: { profesor: true },
+    });
     if (!curso) {
       throw new NotFoundException('Curso no encontrado');
+    }
+    if (updateCursoDto.id_profesor) {
+      curso.profesor.id_usuario = updateCursoDto.id_profesor;
     }
     this.cursoRepository.merge(curso, updateCursoDto);
     return await this.cursoRepository.save(curso);
@@ -123,11 +141,11 @@ export class CursoService {
       where: { id_curso },
       relations: {
         inscripciones: {
-          usuario: true, // Para saber quiénes son los alumnos
+          usuario: true,
         },
         tareas: {
           entregas: {
-            usuario: true, // Para cruzar la entrega con el alumno
+            usuario: true,
           },
         },
       },

@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsuarioService } from 'src/usuario/usuario.service';
-
+import * as bcrypt from 'bcrypt';
 @Injectable()
 export class AuthService {
   constructor(
@@ -18,10 +18,11 @@ export class AuthService {
   ): Promise<{ access_token: string }> {
     const usuario = await this.usuarioService.findOneByEmail(correo);
     if (!usuario) {
-      throw new NotFoundException('Usuario no encontrado');
+      throw new NotFoundException('Credenciales incorrectas');
     }
-    if (usuario.password !== password) {
-      throw new UnauthorizedException('Contraseña incorrecta');
+    const isPasswordValid = await bcrypt.compare(password, usuario.password);
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('Credenciales incorrectas');
     }
     const payload = {
       correo: usuario.correo,

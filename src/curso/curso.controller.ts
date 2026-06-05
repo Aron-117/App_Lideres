@@ -35,14 +35,13 @@ export class CursoController {
   findAll() {
     return this.cursoService.findAll();
   }
-
   @Get('my')
   findMyCursos(@Req() req) {
     const userId = req.user?.sub;
     if (!userId) {
       return [];
     }
-    const rol = req.user?.rol;
+    const rol: string = req.user?.rol;
     if (rol === 'Profesor') {
       return this.cursoService.findMyCursos(userId);
     }
@@ -55,6 +54,10 @@ export class CursoController {
   @Roles('Admin')
   async getEstadisticas() {
     return await this.cursoService.getEstadisticasCupos();
+  }
+  @Get(':idCurso/inscripciones')
+  findEstudiantes(@Param('idCurso') idCurso: string) {
+    return this.cursoService.getEstudiantes(+idCurso);
   }
   @Get(':id/reporte-notas')
   @Roles('Admin', 'Profesor')
