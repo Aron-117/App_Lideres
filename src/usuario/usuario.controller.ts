@@ -13,7 +13,6 @@ import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
 import { RolesGuard } from 'src/auth/decorators/roles.guard';
 import { Roles } from 'src/auth/decorators/roles.decorator';
-import { Public } from 'src/auth/auth.guard';
 
 @UseGuards(RolesGuard)
 @Controller('usuario')
@@ -24,11 +23,6 @@ export class UsuarioController {
   @Roles('Admin')
   create(@Body() createUsuarioDto: CreateUsuarioDto) {
     return this.usuarioService.create(createUsuarioDto);
-  }
-  @Public()
-  @Get('migrar-passwords')
-  async migrarPasswords() {
-    return this.usuarioService.migrarPasswordsPlaintext();
   }
   @Get()
   @Roles('Admin')

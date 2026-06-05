@@ -72,23 +72,4 @@ export class UsuarioService {
     await this.usuarioRepository.remove(usuario);
     return usuario;
   }
-  async migrarPasswordsPlaintext() {
-    // Traemos todos los usuarios
-    const usuarios = await this.usuarioRepository.find();
-    let actualizados = 0;
-
-    for (const usuario of usuarios) {
-      // Si la contraseña NO empieza con el formato de bcrypt ($2b$), asumimos que es texto plano
-      if (!usuario.password.startsWith('$2b$')) {
-        const saltRounds = 10;
-        usuario.password = await bcrypt.hash(usuario.password, saltRounds);
-        await this.usuarioRepository.save(usuario);
-        actualizados++;
-      }
-    }
-
-    return {
-      mensaje: `Migración completada. Se encriptaron ${actualizados} contraseñas antiguas.`,
-    };
-  }
 }
