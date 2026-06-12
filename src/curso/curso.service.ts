@@ -114,7 +114,7 @@ export class CursoService {
     if (!curso) {
       throw new NotFoundException('Curso no encontrado');
     }
-    return await this.cursoRepository.remove(curso);
+    return await this.cursoRepository.softRemove(curso);
   }
   async getEstadisticasCupos() {
     const estadisticasRaw = await this.cursoRepository

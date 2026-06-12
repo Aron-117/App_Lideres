@@ -30,7 +30,6 @@ export class UsuarioService {
     usuario.fecha_registro = new Date();
     return await this.usuarioRepository.save(usuario);
   }
-
   async findAll(): Promise<Usuario[]> {
     return await this.usuarioRepository.find();
   }

@@ -13,6 +13,7 @@ import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
 import { RolesGuard } from 'src/auth/decorators/roles.guard';
 import { Roles } from 'src/auth/decorators/roles.decorator';
+import { Public } from 'src/auth/auth.guard';
 
 @UseGuards(RolesGuard)
 @Controller('usuario')
@@ -24,11 +25,26 @@ export class UsuarioController {
   create(@Body() createUsuarioDto: CreateUsuarioDto) {
     return this.usuarioService.create(createUsuarioDto);
   }
+  // @Public()
+  // @Get('setup-admin')
+  // async crearAdminInicial() {
+  //     const nuevoAdmin = await this.usuarioService.create({
+  //       nombre: 'Administrador',
+  //       correo: 'admin@gmail.com',
+  //       password: 'Password123*',
+  //       rol: 'Admin',
+  //     } as any);
+  //     return {
+  //       mensaje: 'Admin creado con exito',
+  //     };
+  // }
   @Get()
   @Roles('Admin')
   findAll() {
     return this.usuarioService.findAll();
   }
+
+
   @Get('estudiantes')
   @Roles('Admin')
   findEstudiantes() {

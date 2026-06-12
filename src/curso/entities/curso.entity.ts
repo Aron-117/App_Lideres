@@ -1,5 +1,6 @@
 import {
   Column,
+  DeleteDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
@@ -25,6 +26,9 @@ export class Curso {
     fecha_fin: Date;
     @Column()
     cupos: number;
+    @Column()
+    @DeleteDateColumn()
+    eliminadoEn: Date;
     @ManyToOne(() => Usuario, usuario => usuario.id_usuario, {onDelete: 'SET NULL'})
     @JoinColumn({ name: 'id_usuario' })
     profesor: Usuario;
