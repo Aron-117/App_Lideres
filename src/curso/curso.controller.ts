@@ -48,6 +48,7 @@ export class CursoController {
     if (rol === 'Estudiante') {
       return this.inscripcionService.findCursosByEstudianteId(userId);
     }
+    return [];
   }
 
   @Get('estadisticas')
