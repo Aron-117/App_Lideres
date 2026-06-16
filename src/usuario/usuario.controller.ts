@@ -25,11 +25,11 @@ export class UsuarioController {
   create(@Body() createUsuarioDto: CreateUsuarioDto) {
     return this.usuarioService.create(createUsuarioDto);
   }
-  @Public()
-  @Get('migrar-passwords')
-  async migrarPasswords() {
-    return this.usuarioService.migrarPasswordsPlaintext();
-  }
+  // @Public()
+  // @Get('migrar-passwords')
+  // async migrarPasswords() {
+  //   return this.usuarioService.migrarPasswordsPlaintext();
+  // }
   @Get()
   @Roles('Admin')
   findAll() {
