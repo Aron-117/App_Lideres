@@ -85,6 +85,8 @@ export class UsuarioService {
     if (!usuario) {
       throw new NotFoundException('Usuario no encontrado');
     }
+    if (usuario.rol === 'Admin')
+      throw new ConflictException('No es posible eliminar a los admins');
     await this.usuarioRepository.remove(usuario);
     return usuario;
   }
