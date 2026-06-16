@@ -14,8 +14,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
 import { FilesModule } from './files/files.module';
 import { ConfigModule } from '@nestjs/config';
-import { MulterModule } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
 import { LogAccesoModule } from './log-acceso/log-acceso.module';
 
 @Module({
