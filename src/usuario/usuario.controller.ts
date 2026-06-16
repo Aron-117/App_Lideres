@@ -25,19 +25,11 @@ export class UsuarioController {
   create(@Body() createUsuarioDto: CreateUsuarioDto) {
     return this.usuarioService.create(createUsuarioDto);
   }
-  // @Public()
-  // @Get('setup-admin')
-  // async crearAdminInicial() {
-  //     const nuevoAdmin = await this.usuarioService.create({
-  //       nombre: 'Administrador',
-  //       correo: 'admin@gmail.com',
-  //       password: 'Password123*',
-  //       rol: 'Admin',
-  //     } as any);
-  //     return {
-  //       mensaje: 'Admin creado con exito',
-  //     };
-  // }
+  @Public()
+  @Get('migrar-passwords')
+  async migrarPasswords() {
+    return this.usuarioService.migrarPasswordsPlaintext();
+  }
   @Get()
   @Roles('Admin')
   findAll() {
