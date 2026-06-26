@@ -55,6 +55,13 @@ export class UsuarioService {
     if (!usuario) {
       throw new NotFoundException('Usuario no encontrado');
     }
+    const saltRounds = 10;
+    if (updateUsuarioDto.password) {
+      updateUsuarioDto.password = await bcrypt.hash(
+        updateUsuarioDto.password,
+        saltRounds,
+      );
+    }
     const updatedUsuario = this.usuarioRepository.merge(
       usuario,
       updateUsuarioDto,
